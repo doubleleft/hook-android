@@ -12,7 +12,7 @@ You need to host and create your own JavaScript bridge for your project.
 Example:
 
 `bridge.html`
-```
+```javascript
 <script type="text/javascript" src="http://dl-api.ddll.co/dist/dl.min.js"></script>
 <script type="text/javascript">
 	window.client = new DL.Client(apiConfig);
