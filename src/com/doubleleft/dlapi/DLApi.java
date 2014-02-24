@@ -167,6 +167,19 @@ public class DLApi {
             r.responseHandler.onComplete(response);
         }
 
+        public void requestErrorCallback(int requestId, String jsonResponse)
+        {
+            Log.d("[dl-api]", "callback error");
+            DLApiRequest r = requests.get(requestId);
+            JSONObject response = null;
+            try{
+                response = new JSONObject(jsonResponse);
+
+            }catch (Exception e){
+            }
+            r.responseHandler.onError(response);
+        }
+
         public void runQueue()
         {
             if(queue.isEmpty()){

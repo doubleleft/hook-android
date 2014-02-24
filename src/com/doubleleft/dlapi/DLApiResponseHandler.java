@@ -23,4 +23,9 @@ public class DLApiResponseHandler
 
     }
 
+    public void onError(JSONObject error)
+    {
+
+    }
+
 }
