@@ -1,5 +1,6 @@
 package com.doubleleft.api;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 
@@ -26,7 +27,15 @@ public class Collection {
 
     public void create(JSONObject data, Responder responder)
     {
-        client.post(this.segments, data, responder);
+        JSONObject dataToPost = new JSONObject();
+        try{
+            dataToPost.put("data", data);
+
+        }catch (JSONException exception){
+
+        }
+
+        client.post(this.segments, dataToPost, responder);
     }
 
     public void get(Responder responder)
@@ -36,7 +45,14 @@ public class Collection {
 
     public void update(int id, JSONObject data, Responder responder)
     {
-        client.post(this.segments + "/" + id, data, responder);
+        JSONObject dataToPost = new JSONObject();
+        try{
+            dataToPost.put("data", data);
+
+        }catch (JSONException exception){
+
+        }
+        client.post(this.segments + "/" + id, dataToPost, responder);
     }
 
     public void remove(int id, Responder responder)

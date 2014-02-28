@@ -69,7 +69,7 @@ public class Client {
         request.addHeader("X-App-Key", key);
         request.setResponder(responder);
 
-        request.execute(this.url + segments);
+        request.execute(this.url + "/" + segments);
         return request;
     }
 }

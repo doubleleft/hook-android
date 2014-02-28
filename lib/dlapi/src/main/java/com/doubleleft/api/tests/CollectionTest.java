@@ -1,12 +1,15 @@
 package com.doubleleft.api.tests;
 
 import android.test.InstrumentationTestCase;
+import android.util.Log;
 
 import com.doubleleft.api.Client;
 import com.doubleleft.api.Responder;
 import com.doubleleft.api.Response;
 
 import org.json.JSONObject;
+
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Created by glaet on 2/28/14.
@@ -17,6 +20,7 @@ public class CollectionTest extends InstrumentationTestCase{
         String appKey = "q1uU7tFtXnLad6FIGGn2cB+gxcx64/uPoDhqe2Zn5AE=";
         String endpointURL = "http://dl-api.ddll.co";
 
+        final CountDownLatch signal = new CountDownLatch(1);
         Client client = new Client(endpointURL, appKey, appId);
 
         JSONObject data = new JSONObject();
@@ -27,16 +31,20 @@ public class CollectionTest extends InstrumentationTestCase{
         client.collection("android").create(data, new Responder() {
             @Override
             public void onSuccess(Response response) {
+                Log.d("dl-api", response.raw);
                 boolean cameraSupport = response.object.optBoolean("hasCameraSupport");
                 assertTrue(cameraSupport);
-                assertEquals(10.0, response.object.optInt("version"));
+                assertEquals("10", response.object.optInt("version"));
                 assertEquals("Samsung Galaxy", response.object.optString("device"));
+                signal.countDown();
             }
 
             @Override
             public void onError(Response response) {
-                
+                Log.d("dl-api", "onError: "+response.raw);
+                signal.countDown();
             }
         });
+        signal.await();
     }
 }

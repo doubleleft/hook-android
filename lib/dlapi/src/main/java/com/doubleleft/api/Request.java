@@ -88,6 +88,7 @@ public class Request extends AsyncTask<String, String, String>
             }
 
             response = httpclient.execute(request);
+
             StatusLine statusLine = response.getStatusLine();
             statusCode = statusLine.getStatusCode();
 
