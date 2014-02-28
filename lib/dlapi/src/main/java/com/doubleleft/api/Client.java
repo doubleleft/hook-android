@@ -1,6 +1,7 @@
 package com.doubleleft.api;
 
-import java.util.Hashtable;
+import org.json.JSONObject;
+
 
 /**
  * Created by glaet on 2/28/14.
@@ -33,33 +34,42 @@ public class Client {
         return new Collection(this, collectionName);
     }
 
-    public Channel channel(String name, Hashtable options)
+    public Channel channel(String name, JSONObject options)
     {
         return null;
     }
 
-    public void post()
+    public Request get(String segments, JSONObject data, Responder responder)
     {
-
+        return this.request(segments, "GET", data, responder);
     }
 
-    public void get()
+    public Request post(String segments, JSONObject data, Responder responder)
     {
-
+        return this.request(segments, "POST", data, responder);
     }
 
-    public void put()
+    public Request put(String segments, JSONObject data, Responder responder)
     {
-
+        return this.request(segments, "PUT", data, responder);
     }
 
-    public void delete()
+    public Request remove(String segments, Responder responder)
     {
-
+        return this.request(segments, "DELETE", null, responder);
     }
 
-    public void request()
+    public Request request(String segments, String method, JSONObject data, Responder responder)
     {
+        Request request = new Request();
+        request.method = method;
+        request.data = data;
+        request.addHeader("Content-Type", "application/json");
+        request.addHeader("X-App-Id", appId);
+        request.addHeader("X-App-Key", key);
+        request.setResponder(responder);
 
+        request.execute(this.url + segments);
+        return request;
     }
 }
