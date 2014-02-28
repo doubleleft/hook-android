@@ -34,7 +34,7 @@ public class CollectionTest extends InstrumentationTestCase{
                 Log.d("dl-api", response.raw);
                 boolean cameraSupport = response.object.optBoolean("hasCameraSupport");
                 assertTrue(cameraSupport);
-                assertEquals("10", response.object.optInt("version"));
+                assertEquals("10", response.object.optString("version"));
                 assertEquals("Samsung Galaxy", response.object.optString("device"));
                 signal.countDown();
             }
