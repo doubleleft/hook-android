@@ -2,6 +2,7 @@ package com.doubleleft.api;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,7 +37,7 @@ public class Auth
                     setCurrentUser(user);
 
                 }catch(JSONException e){
-
+                    Log.d("dl-api", "error on Auth module " + e.toString());
                 }
             }
         }
