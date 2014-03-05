@@ -201,15 +201,15 @@ public class Collection {
                 query.putOpt("offset", _offset);
             }
 
-            if(_wheres != null){
+            if(_wheres != null && _wheres.size() > 0){
                 query.putOpt("q", _wheres);
             }
 
-            if(_ordering != null){
+            if(_ordering != null && _ordering.size() > 0){
                 query.putOpt("s", _ordering);
             }
 
-            if(_group != null){
+            if(_group != null && _group.size() > 0){
                 query.putOpt("g", _group);
             }
 
