@@ -3,9 +3,14 @@ package com.doubleleft.api;
 /**
  * Created by glaet on 2/28/14.
  */
-public class Files {
+public class Files
+{
+    protected Client client;
+
     public Files(Client client)
     {
+        this.client = client;
+
         //TODO: implement Files API
         throw new Error("Not implemented");
     }

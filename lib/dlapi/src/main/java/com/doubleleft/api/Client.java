@@ -40,6 +40,7 @@ public class Client {
 
     public Channel channel(String name, JSONObject options)
     {
+        //TODO: implement client Channel API
         throw new Error("Channel API not implemented");
     }
 
