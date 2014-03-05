@@ -1,5 +1,7 @@
 package com.doubleleft.api;
 
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -189,6 +191,50 @@ public class Collection {
     protected JSONObject buildQuery()
     {
         JSONObject query = new JSONObject();
+
+        try{
+            if(_limit != null){
+                query.putOpt("limit", _limit);
+            }
+
+            if(_offset != null){
+                query.putOpt("offset", _offset);
+            }
+
+            if(_wheres != null){
+                query.putOpt("q", _wheres);
+            }
+
+            if(_ordering != null){
+                query.putOpt("s", _ordering);
+            }
+
+            if(_group != null){
+                query.putOpt("g", _group);
+            }
+
+            if(_options != null){
+                if(_options.data != null){
+                    query.putOpt("d", _options.data);
+                }
+
+                if(_options.first){
+                    query.putOpt("first", 1);
+                }
+
+                if(_options.aggregation != null){
+                    query.putOpt("aggr", _options.aggregation);
+                }
+
+                if(_options.operation != null){
+                    query.putOpt("op", _options.operation);
+                }
+            }
+
+        }catch (JSONException e){
+            Log.d("dl-api", "error building query " + e.toString());
+        }
+
         this.reset(); //clear for future calls
         return query;
     }
