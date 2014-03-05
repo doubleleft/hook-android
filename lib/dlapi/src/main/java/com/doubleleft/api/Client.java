@@ -71,6 +71,11 @@ public class Client {
         request.addHeader("Content-Type", "application/json");
         request.addHeader("X-App-Id", appId);
         request.addHeader("X-App-Key", key);
+
+        if(auth.hasAuthToken()){
+            request.addHeader("X-Auth-Token", auth.getAuthToken());
+        }
+
         request.setResponder(responder);
 
         request.execute(this.url + "/" + segments);

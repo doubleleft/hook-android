@@ -94,6 +94,16 @@ public class Auth
         setCurrentUser(null);
     }
 
+    public boolean hasAuthToken()
+    {
+        return getAuthToken() != null;
+    }
+
+    public String getAuthToken()
+    {
+        return localStorage != null ? localStorage.getString(client.appId + "-" + AUTH_DATA_KEY, null) : null;
+    }
+
     protected void setCurrentUser(JSONObject data)
     {
         _currentUser = data;
