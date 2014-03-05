@@ -1,6 +1,11 @@
 package com.doubleleft.api;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
+import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 /**
  * Created by glaet on 2/28/14.
@@ -13,10 +18,28 @@ public class Auth
     protected static String AUTH_TOKEN_KEY = "dl-api-auth-token";
     protected static String AUTH_DATA_KEY = "dl-api-auth-data";
     protected Client client;
+    protected SharedPreferences localStorage;
+    protected JSONObject _currentUser;
 
     public Auth(Client client)
     {
         this.client = client;
+        if(client.context != null){
+            localStorage = client.context.getSharedPreferences("dl-api-localStorage-"+client.appId, Context.MODE_PRIVATE);
+        }
+
+        if(localStorage != null){
+            String currentUser = localStorage.getString(client.appId + "-" + AUTH_DATA_KEY, null);
+            if(currentUser != null){
+                try{
+                    JSONObject user = (JSONObject) new JSONTokener(currentUser).nextValue();
+                    setCurrentUser(user);
+
+                }catch(JSONException e){
+
+                }
+            }
+        }
     }
 
     public void authenticate(String provider, JSONObject data, Responder responder)
@@ -72,17 +95,36 @@ public class Auth
 
     protected void setCurrentUser(JSONObject data)
     {
+        _currentUser = data;
 
+        if(localStorage != null){
+            SharedPreferences.Editor editor = localStorage.edit();
+            if(_currentUser == null){
+                editor.remove(client.appId + "-" + AUTH_TOKEN_KEY);
+                editor.remove(client.appId + "-" + AUTH_DATA_KEY);
+            }else{
+                editor.putString(client.appId + "-" + AUTH_DATA_KEY, _currentUser.toString());
+            }
+            editor.commit();
+        }
     }
 
     protected JSONObject getCurrentUser()
     {
-        return null;
+        return _currentUser;
     }
 
     protected void registerToken(JSONObject data)
     {
-
+        JSONObject tokenObject = data.optJSONObject("token");
+        if(tokenObject != null){
+            if(localStorage != null){
+                SharedPreferences.Editor editor = localStorage.edit();
+                editor.putString(client.appId + "-" + AUTH_TOKEN_KEY, tokenObject.optString("token"));
+                editor.commit();
+            }
+            setCurrentUser(data);
+        }
     }
 
 }

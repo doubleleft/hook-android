@@ -21,7 +21,7 @@ public class CollectionTest extends InstrumentationTestCase{
         String endpointURL = "http://dl-api.ddll.co";
 
         final CountDownLatch signal = new CountDownLatch(1);
-        Client client = new Client(endpointURL, appKey, appId);
+        Client client = new Client(null, endpointURL, appKey, appId);
 
         JSONObject data = new JSONObject();
         data.put("device", "Samsung Galaxy");

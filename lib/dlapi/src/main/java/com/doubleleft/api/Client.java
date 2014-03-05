@@ -1,5 +1,7 @@
 package com.doubleleft.api;
 
+import android.content.Context;
+
 import org.json.JSONObject;
 
 
@@ -16,9 +18,11 @@ public class Client {
     public Auth auth;
     public Files files;
     public System system;
+    public Context context;
 
-    public Client(String url, String key, String appId)
+    public Client(Context context, String url, String key, String appId)
     {
+        this.context = context;
         this.url = url;
         this.key = key;
         this.appId = appId;
@@ -36,7 +40,7 @@ public class Client {
 
     public Channel channel(String name, JSONObject options)
     {
-        return null;
+        throw new Error("Channel API not implemented");
     }
 
     public Request get(String segments, JSONObject data, Responder responder)
