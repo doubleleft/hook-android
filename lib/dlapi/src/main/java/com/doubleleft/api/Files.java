@@ -7,5 +7,6 @@ public class Files {
     public Files(Client client)
     {
         //TODO: implement Files API
+        throw new Error("Not implemented");
     }
 }

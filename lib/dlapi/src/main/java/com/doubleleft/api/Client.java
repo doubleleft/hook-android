@@ -29,7 +29,7 @@ public class Client {
 
         keys = new KeyValues(this);
         auth = new Auth(this);
-        files = new Files(this);
+        //files = new Files(this);
         system = new System(this);
     }
 
