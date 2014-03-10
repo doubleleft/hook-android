@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.6.+'
+        classpath 'com.android.tools.build:gradle:0.7.+'
     }
 }
 apply plugin: 'android'
@@ -25,3 +25,17 @@ android {
 dependencies {
 	compile 'com.android.support:appcompat-v7:+'
 }
+
+// This is the actual solution, as in http://stackoverflow.com/a/19037807/1002054
+task clearJar(type: Delete) {
+    delete 'build/libs/DL-API.jar'
+}
+
+task makeJar(type: Copy) {
+    from('build/bundles/release/')
+    into('build/libs/')
+    include('classes.jar')
+    rename ('classes.jar', 'DLAPI.jar')
+}
+
+makeJar.dependsOn(clearJar, build)

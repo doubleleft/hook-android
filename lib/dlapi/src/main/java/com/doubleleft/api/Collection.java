@@ -1,7 +1,9 @@
 package com.doubleleft.api;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -13,6 +15,7 @@ import java.util.Vector;
  * Created by glaet on 2/28/14.
  */
 
+@SuppressLint("DefaultLocale")
 public class Collection {
     protected Client client;
     protected String name;
@@ -202,15 +205,27 @@ public class Collection {
             }
 
             if(_wheres != null && _wheres.size() > 0){
-                query.putOpt("q", _wheres);
+            	JSONArray whereArray = new JSONArray();
+            	for(int i = 0; i < _wheres.size(); i++){
+            		whereArray.put(_wheres.get(i).toJSON());
+            	}
+                query.putOpt("q", whereArray);
             }
 
             if(_ordering != null && _ordering.size() > 0){
-                query.putOpt("s", _ordering);
+                JSONArray orderingArray = new JSONArray();
+            	for(int i = 0; i < _ordering.size(); i++){
+            		orderingArray.put(_ordering.get(i).toJSON());
+            	}
+                query.putOpt("s", orderingArray);
             }
 
             if(_group != null && _group.size() > 0){
-                query.putOpt("g", _group);
+            	JSONArray groupArray = new JSONArray();
+            	for(int i = 0; i < _group.size(); i++){
+            		groupArray.put(_group.get(i));
+            	}
+                query.putOpt("g", groupArray);
             }
 
             if(_options != null){
@@ -223,11 +238,11 @@ public class Collection {
                 }
 
                 if(_options.aggregation != null){
-                    query.putOpt("aggr", _options.aggregation);
+                    query.putOpt("aggr", _options.aggregation.toJSON());
                 }
 
                 if(_options.operation != null){
-                    query.putOpt("op", _options.operation);
+                    query.putOpt("op", _options.operation.toJSON());
                 }
             }
 
@@ -277,6 +292,21 @@ public class Collection {
             this.field = field;
             this.value = value;
         }
+        
+        public JSONObject toJSON()
+        {
+        	JSONObject json = new JSONObject();
+        	try {
+				json.putOpt("method", method == null ? JSONObject.NULL : method);
+	        	json.putOpt("field", field == null ? JSONObject.NULL : field);
+	        	json.putOpt("value", value == null ? JSONObject.NULL : value);
+	        	
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+        	return json;
+        }
+        
     }
 
     class CollectionWhere
@@ -291,6 +321,17 @@ public class Collection {
             this.operation = operation;
             this.value = value;
         }
+        
+
+        public Object toJSON()
+        {
+        	JSONArray json = new JSONArray();
+        	json.put(field == null ? JSONObject.NULL : field);
+			json.put(operation == null ? JSONObject.NULL : operation.toLowerCase());
+			json.put(value == null ? JSONObject.NULL : value);
+        	return json;
+        }
+        
     }
 
     class CollectionOrdering
@@ -303,5 +344,19 @@ public class Collection {
             this.field = field;
             this.direction = direction;
         }
+        
+        public JSONObject toJSON()
+        {
+        	JSONObject json = new JSONObject();
+        	try {
+				json.putOpt("field", field == null ? JSONObject.NULL : field);
+	        	json.putOpt("direction", direction == null ? JSONObject.NULL : direction);
+	        	
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+        	return json;
+        }
+        
     }
 }

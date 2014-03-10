@@ -13,4 +13,9 @@ public class Response {
     public JSONArray array;
     public String raw;
     public int code;
+    
+    public Integer toInt()
+    {
+    	return Integer.parseInt(raw.replace("\"", ""));
+    }
 }

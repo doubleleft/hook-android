@@ -107,7 +107,7 @@ public class Request extends AsyncTask<String, String, String>
         Response responseObj = new Response();
         responseObj.raw = errorString != null ? errorString : responseString;
         responseObj.code = statusCode;
-
+        
         if (responseString != null) {
             String jsonString = responseString.trim();
             if (jsonString.startsWith("{") || jsonString.startsWith("[")) {

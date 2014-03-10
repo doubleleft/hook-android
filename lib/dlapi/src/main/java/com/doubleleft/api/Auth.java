@@ -120,7 +120,7 @@ public class Auth
         }
     }
 
-    protected JSONObject getCurrentUser()
+    public JSONObject getCurrentUser()
     {
         return _currentUser;
     }

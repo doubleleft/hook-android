@@ -1,6 +1,7 @@
 package com.doubleleft.api;
 
 import android.content.Context;
+import android.util.Log;
 
 import org.json.JSONObject;
 
@@ -72,7 +73,10 @@ public class Client {
         request.addHeader("Content-Type", "application/json");
         request.addHeader("X-App-Id", appId);
         request.addHeader("X-App-Key", key);
-
+        
+        Log.d("dl-api", "request "+data.toString());
+        Log.d("dl-api", "URL_request "+this.url + "/" + segments);
+        
         if(auth.hasAuthToken()){
             request.addHeader("X-Auth-Token", auth.getAuthToken());
         }
