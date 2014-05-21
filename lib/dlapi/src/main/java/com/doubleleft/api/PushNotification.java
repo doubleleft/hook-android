@@ -32,7 +32,14 @@ public class PushNotification {
         data.putOpt("app_version", packageVersion);
         data.putOpt("device_id", regId);
 
-        this.client.post("push/register", data, responder);
+        this.client.post("push/registration", data, responder);
+    }
+
+    public void unregister(String regId)
+    {
+        JSONObject data = new JSONObject();
+        data.putOpt("device_id", regId);
+        this.client.delete("push/registration", data, responder);
     }
 
 }
