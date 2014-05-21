@@ -19,6 +19,7 @@ public class Client {
     public Auth auth;
     public Files files;
     public System system;
+    public PushNotification push;
     public Context context;
 
     public Client(Context context, String url, String key, String appId)
@@ -32,6 +33,7 @@ public class Client {
         auth = new Auth(this);
         //files = new Files(this);
         system = new System(this);
+        push = new PushNotification(this);
     }
 
     public Collection collection(String collectionName)
@@ -73,10 +75,10 @@ public class Client {
         request.addHeader("Content-Type", "application/json");
         request.addHeader("X-App-Id", appId);
         request.addHeader("X-App-Key", key);
-        
+
         Log.d("dl-api", "request "+data.toString());
         Log.d("dl-api", "URL_request "+this.url + "/" + segments);
-        
+
         if(auth.hasAuthToken()){
             request.addHeader("X-Auth-Token", auth.getAuthToken());
         }
