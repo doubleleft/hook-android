@@ -101,7 +101,7 @@ public class Auth
 
     public String getAuthToken()
     {
-        return localStorage != null ? localStorage.getString(client.appId + "-" + AUTH_DATA_KEY, null) : null;
+        return localStorage != null ? localStorage.getString(client.appId + "-" + AUTH_TOKEN_KEY, null) : null;
     }
 
     protected void setCurrentUser(JSONObject data)
