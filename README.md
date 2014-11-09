@@ -1,11 +1,11 @@
-dl-api-android
+Hook-android
 ===
 
-dl-api android client
+Hook android client
 
 #About
 
-This is a port of the [JavaScript client](http://github.com/doubleleft/dl-api-javascript). The library is a native Android Library, with no external dependencies, targetting Android API Level 10. It doesn't require the JavaScript client either, the library communicates with dl-api's REST interface. 
+This is a port of the [JavaScript client](http://github.com/doubleleft/hook-javascript). The library is a native Android Library, with no external dependencies, targetting Android API Level 10. It doesn't require the JavaScript client either, the library communicates with hook's REST interface. 
 
 #How to Use
 
@@ -13,7 +13,7 @@ This is a port of the [JavaScript client](http://github.com/doubleleft/dl-api-ja
 ```java
 String appId = "1";
 String appKey = "q1uU7tFtXnLad6FIGGn2cB+gxcx64/uPoDhqe2Zn5AE=";
-String endpointURL = "http://dl-api.ddll.co";
+String endpointURL = "http://hook.ddll.co";
 Context context = this;
 Client client = new Client(context, endpointURL, appKey, appId);
 ```
@@ -28,7 +28,7 @@ data.put("hasCameraSupport", true);
 client.collection("android").create(data, new Responder() {
 	@Override
 	public void onSuccess(Response response) {
-		Log.d("dl-api", response.raw);
+		Log.d("hook", response.raw);
 		/*
 			Response object:
 				public JSONObject object;
@@ -40,7 +40,7 @@ client.collection("android").create(data, new Responder() {
 
 	@Override
 	public void onError(Response response) {
-		Log.d("dl-api", "onError: "+response.raw);
+		Log.d("hook", "onError: "+response.raw);
 	}
 });
 ```
@@ -50,12 +50,12 @@ client.collection("android").create(data, new Responder() {
 client.collection("android").where("version", 10).get(new Responder() {
 	@Override
 	public void onSuccess(Response response) {
-		Log.d("dl-api", response.object.optString("version"));
+		Log.d("hook", response.object.optString("version"));
 	}
 
 	@Override
 	public void onError(Response response) {
-		Log.d("dl-api", "onError: "+response.raw);
+		Log.d("hook", "onError: "+response.raw);
 	}
 });
 ```
@@ -71,7 +71,7 @@ client.collection("android").where("version", 10).get(new Responder() {
 - `max`
 - `min`
 - `sum`
-- See [Collection.java](https://github.com/doubleleft/dl-api-android/blob/master/lib/dlapi/src/main/java/com/doubleleft/api/Collection.java) for better reference
+- See [Collection.java](https://github.com/doubleleft/hook-android/blob/master/lib/dlapi/src/main/java/com/doubleleft/api/Collection.java) for better reference
 
 ### Authentication: create user
 ```java
@@ -105,5 +105,5 @@ client.auth.verify(Auth.PROVIDER_EMAIL, data, responder);
 - `logout`
 - `getAuthToken`
 - `hasAuthToken`
-- See [Auth.java](https://github.com/doubleleft/dl-api-android/blob/master/lib/dlapi/src/main/java/com/doubleleft/api/Auth.java) for better reference
+- See [Auth.java](https://github.com/doubleleft/hook-android/blob/master/lib/dlapi/src/main/java/com/doubleleft/api/Auth.java) for better reference
 
