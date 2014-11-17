@@ -17,14 +17,18 @@ public class Auth {
 
 	protected static String AUTH_TOKEN_KEY = "dl-api-auth-token";
 	protected static String AUTH_DATA_KEY = "dl-api-auth-data";
-	protected Client client;
+	
 	protected SharedPreferences localStorage;
 	protected JSONObject _currentUser;
+	
+	protected Client client;
 
-	public Auth(Client client) {
+	public Auth(Client client, Context context) {
+		
 		this.client = client;
-		if (client.getContext() != null) {
-			localStorage = client.getContext().getSharedPreferences("dl-api-localStorage-" + Client.appId, Context.MODE_PRIVATE);
+		
+		if (context != null) {
+			localStorage = context.getSharedPreferences("dl-api-localStorage-" + Client.appId, Context.MODE_PRIVATE);
 		}
 
 		if (localStorage != null) {
