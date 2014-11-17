@@ -29,9 +29,13 @@ public class Client {
 		appKey = context.getString(R.string.hook_appKey);
 		url = context.getString(R.string.hook_endpointUrl);
 		
+		Log.d("hook", "appId = " + appId);
+		Log.d("hook", "appKey = " + appKey);
+		Log.d("hook", "url = " + url);
+		
 		keys = new KeyValues(this);
 		auth = new Auth(this);
-		files = new Files(this);
+//		files = new Files(this);
 		system = new System(this);
 	}
 
