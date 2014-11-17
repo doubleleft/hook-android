@@ -74,7 +74,7 @@ public class Client {
 		request.addHeader("X-App-Key", appKey);
 
 		Log.d("dl-api", "request " + data.toString());
-		Log.d("dl-api", "URL_request " + this.url + "/" + segments);
+		Log.d("dl-api", "URL_request " + url + "/" + segments);
 
 		if (auth != null && auth.hasAuthToken()) {
 			request.addHeader("X-Auth-Token", auth.getAuthToken());
@@ -82,7 +82,7 @@ public class Client {
 
 		request.setResponder(responder);
 
-		request.execute(this.url + "/" + segments);
+		request.execute(url + "/" + segments);
 		return request;
 	}
 
