@@ -30,6 +30,8 @@ public class MainActivity extends Activity {
 		Client.appId = context.getString(R.string.hook_appId);
 		Client.appKey = context.getString(R.string.hook_appKey);
 		Client.url = context.getString(R.string.hook_endpointUrl);
+		
+		Client.context = this;
 
 		Button requestButton = (Button) this.findViewById(R.id.request_button);
 		requestButton.setOnClickListener(new OnClickListener() {
