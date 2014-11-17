@@ -22,15 +22,12 @@ public class Client {
 	private Files files;
 	private System system;
 
-	public Client() {
+	public Client() throws ClientNotSetupException {
 
 		// Check if the Client has been setup
-		try {
-			if (appId == null || appKey == null || url == null) {
-				throw new ClientNotSetupException("Hook Client not setup");
-			}
-		} catch (ClientNotSetupException e) {
-			Log.d("hook", e.getMessage());
+		if (appId == null || appKey == null || url == null) {
+			throw new ClientNotSetupException(
+					"Hook Client not setup. Please, set the values for the statics Client.appId, Client.appKey and Client.url accordingly.");
 		}
 
 		Log.d("hook", "appId = " + appId);

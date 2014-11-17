@@ -9,6 +9,8 @@ import org.json.JSONObject;
 
 import android.util.Log;
 
+import com.doubleleft.hook.exceptions.ClientNotSetupException;
+
 /**
  * Base Entity Class. Your model Classes should extend this Class.
  * 
@@ -17,7 +19,7 @@ import android.util.Log;
  */
 public abstract class Entity {
 
-	public void create(Responder responder) {
+	public void create(Responder responder) throws ClientNotSetupException {
 
 		// Populate fields using Reflection
 		HashMap<String, Object> hashMap = new HashMap<String, Object>();
