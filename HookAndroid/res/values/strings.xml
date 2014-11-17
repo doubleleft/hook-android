@@ -2,8 +2,8 @@
 
     <string name="app_name">Hook Android</string>
     
-    <string name="hook_appKey">1</string>
-    <string name="hook_appId">q1uU7tFtXnLad6FIGGn2cB+gxcx64/uPoDhqe2Zn5AE=</string>
-    <string name="hook_endpointUrl">http://dl-api.ddll.co</string>
+    <string name="hook_appId"></string>
+	<string name="hook_appKey"></string>
+    <string name="hook_endpointUrl"></string>
    	
 </resources>
