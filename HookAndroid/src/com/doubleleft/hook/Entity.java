@@ -7,7 +7,6 @@ import java.util.Locale;
 
 import org.json.JSONObject;
 
-import android.content.Context;
 import android.util.Log;
 
 /**
@@ -17,12 +16,6 @@ import android.util.Log;
  * 
  */
 public abstract class Entity {
-
-	private Context context;
-
-	public Entity(Context context) {
-		this.context = context;
-	}
 
 	public void create(Responder responder) {
 
@@ -37,7 +30,7 @@ public abstract class Entity {
 		}
 
 		// D-D-D-D-DROP THE BASS
-		Client client = new Client(context);
+		Client client = new Client();
 		String collectionName = this.getEntityName();
 		final JSONObject jsonObject = new JSONObject(hashMap);
 		client.collection(collectionName).create(jsonObject, responder);

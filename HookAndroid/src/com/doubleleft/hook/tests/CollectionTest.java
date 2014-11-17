@@ -22,7 +22,7 @@ public class CollectionTest extends InstrumentationTestCase {
 
 	public void testCreateAndFetch() throws Exception {
 		final CountDownLatch signal = new CountDownLatch(1);
-		Client client = new Client(null);
+		Client client = new Client();
 
 		JSONObject data = new JSONObject();
 		data.put("device", "Samsung Galaxy");
@@ -51,7 +51,7 @@ public class CollectionTest extends InstrumentationTestCase {
 
 	public void testWhere() throws Exception {
 		final CountDownLatch signal = new CountDownLatch(1);
-		Client client = new Client(null);
+		Client client = new Client();
 		client.collection("android").where("version", 10).get(new Responder() {
 			@Override
 			public void onSuccess(Response response) {
@@ -71,7 +71,7 @@ public class CollectionTest extends InstrumentationTestCase {
 
 	public void testSort() throws Exception {
 		final CountDownLatch signal = new CountDownLatch(2);
-		final Client client = new Client(null);
+		final Client client = new Client();
 
 		JSONObject data = new JSONObject();
 		data.put("device", "Samsung Galaxy");

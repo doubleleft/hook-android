@@ -2,40 +2,44 @@ package com.doubleleft.hook;
 
 import org.json.JSONObject;
 
-import com.doubleleft.hookandroid.R;
-
 import android.content.Context;
 import android.util.Log;
+
+import com.doubleleft.hook.exceptions.ClientNotSetupException;
 
 /**
  * Created by glaet on 2/28/14.
  */
 public class Client {
 
-	private String appId;
-	private String appKey;
-	private String url;
-	
+	public static String appId;
+	public static String appKey;
+	public static String url;
+	private Context context;
+
 	private KeyValues keys;
 	private Auth auth;
 	private Files files;
 	private System system;
-	private Context context;
 
-	public Client(Context context) {
-		
-		this.context = context;
-		appId = context.getString(R.string.hook_appId);
-		appKey = context.getString(R.string.hook_appKey);
-		url = context.getString(R.string.hook_endpointUrl);
-		
+	public Client() {
+
+		// Check if the Client has been setup
+		try {
+			if (appId == null || appKey == null || url == null) {
+				throw new ClientNotSetupException("Hook Client not setup");
+			}
+		} catch (ClientNotSetupException e) {
+			Log.d("hook", e.getMessage());
+		}
+
 		Log.d("hook", "appId = " + appId);
 		Log.d("hook", "appKey = " + appKey);
 		Log.d("hook", "url = " + url);
-		
+
 		keys = new KeyValues(this);
-		auth = new Auth(this);
-//		files = new Files(this);
+		// auth = new Auth(this);
+		// files = new Files(this);
 		system = new System(this);
 	}
 
@@ -75,7 +79,7 @@ public class Client {
 		Log.d("dl-api", "request " + data.toString());
 		Log.d("dl-api", "URL_request " + this.url + "/" + segments);
 
-		if (auth.hasAuthToken()) {
+		if (auth != null && auth.hasAuthToken()) {
 			request.addHeader("X-Auth-Token", auth.getAuthToken());
 		}
 
@@ -83,18 +87,6 @@ public class Client {
 
 		request.execute(this.url + "/" + segments);
 		return request;
-	}
-
-	public String getAppId() {
-		return appId;
-	}
-
-	public String getAppKey() {
-		return appKey;
-	}
-
-	public String getUrl() {
-		return url;
 	}
 
 	public KeyValues getKeys() {
