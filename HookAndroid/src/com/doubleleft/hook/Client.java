@@ -2,6 +2,8 @@ package com.doubleleft.hook;
 
 import org.json.JSONObject;
 
+import com.doubleleft.hookandroid.R;
+
 import android.content.Context;
 import android.util.Log;
 
@@ -10,25 +12,26 @@ import android.util.Log;
  */
 public class Client {
 
-	public String url;
-	public String key;
-	public String appId;
+	private String appId;
+	private String appKey;
+	private String url;
+	
+	private KeyValues keys;
+	private Auth auth;
+	private Files files;
+	private System system;
+	private Context context;
 
-	public KeyValues keys;
-	public Auth auth;
-	public Files files;
-	public System system;
-	public Context context;
-
-	public Client(Context context, String url, String key, String appId) {
+	public Client(Context context) {
+		
 		this.context = context;
-		this.url = url;
-		this.key = key;
-		this.appId = appId;
-
+		appId = context.getString(R.string.hook_appId);
+		appKey = context.getString(R.string.hook_appKey);
+		url = context.getString(R.string.hook_endpointUrl);
+		
 		keys = new KeyValues(this);
 		auth = new Auth(this);
-		// files = new Files(this);
+		files = new Files(this);
 		system = new System(this);
 	}
 
@@ -63,7 +66,7 @@ public class Client {
 		request.data = data;
 		request.addHeader("Content-Type", "application/json");
 		request.addHeader("X-App-Id", appId);
-		request.addHeader("X-App-Key", key);
+		request.addHeader("X-App-Key", appKey);
 
 		Log.d("dl-api", "request " + data.toString());
 		Log.d("dl-api", "URL_request " + this.url + "/" + segments);
@@ -76,5 +79,57 @@ public class Client {
 
 		request.execute(this.url + "/" + segments);
 		return request;
+	}
+
+	public String getAppId() {
+		return appId;
+	}
+
+	public String getAppKey() {
+		return appKey;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public KeyValues getKeys() {
+		return keys;
+	}
+
+	public void setKeys(KeyValues keys) {
+		this.keys = keys;
+	}
+
+	public Auth getAuth() {
+		return auth;
+	}
+
+	public void setAuth(Auth auth) {
+		this.auth = auth;
+	}
+
+	public Files getFiles() {
+		return files;
+	}
+
+	public void setFiles(Files files) {
+		this.files = files;
+	}
+
+	public System getSystem() {
+		return system;
+	}
+
+	public void setSystem(System system) {
+		this.system = system;
+	}
+
+	public Context getContext() {
+		return context;
+	}
+
+	public void setContext(Context context) {
+		this.context = context;
 	}
 }

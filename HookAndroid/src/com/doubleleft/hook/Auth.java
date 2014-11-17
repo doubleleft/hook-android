@@ -23,12 +23,12 @@ public class Auth {
 
 	public Auth(Client client) {
 		this.client = client;
-		if (client.context != null) {
-			localStorage = client.context.getSharedPreferences("dl-api-localStorage-" + client.appId, Context.MODE_PRIVATE);
+		if (client.getContext() != null) {
+			localStorage = client.getContext().getSharedPreferences("dl-api-localStorage-" + client.getAppId(), Context.MODE_PRIVATE);
 		}
 
 		if (localStorage != null) {
-			String currentUser = localStorage.getString(client.appId + "-" + AUTH_DATA_KEY, null);
+			String currentUser = localStorage.getString(client.getAppId() + "-" + AUTH_DATA_KEY, null);
 			if (currentUser != null) {
 				try {
 					JSONObject user = (JSONObject) new JSONTokener(currentUser).nextValue();
@@ -92,7 +92,7 @@ public class Auth {
 	}
 
 	public String getAuthToken() {
-		return localStorage != null ? localStorage.getString(client.appId + "-" + AUTH_TOKEN_KEY, null) : null;
+		return localStorage != null ? localStorage.getString(client.getAppId() + "-" + AUTH_TOKEN_KEY, null) : null;
 	}
 
 	protected void setCurrentUser(JSONObject data) {
@@ -101,10 +101,10 @@ public class Auth {
 		if (localStorage != null) {
 			SharedPreferences.Editor editor = localStorage.edit();
 			if (_currentUser == null) {
-				editor.remove(client.appId + "-" + AUTH_TOKEN_KEY);
-				editor.remove(client.appId + "-" + AUTH_DATA_KEY);
+				editor.remove(client.getAppId() + "-" + AUTH_TOKEN_KEY);
+				editor.remove(client.getAppId() + "-" + AUTH_DATA_KEY);
 			} else {
-				editor.putString(client.appId + "-" + AUTH_DATA_KEY, _currentUser.toString());
+				editor.putString(client.getAppId() + "-" + AUTH_DATA_KEY, _currentUser.toString());
 			}
 			editor.commit();
 		}
@@ -119,7 +119,7 @@ public class Auth {
 		if (tokenObject != null) {
 			if (localStorage != null) {
 				SharedPreferences.Editor editor = localStorage.edit();
-				editor.putString(client.appId + "-" + AUTH_TOKEN_KEY, tokenObject.optString("token"));
+				editor.putString(client.getAppId() + "-" + AUTH_TOKEN_KEY, tokenObject.optString("token"));
 				editor.commit();
 			}
 			setCurrentUser(data);

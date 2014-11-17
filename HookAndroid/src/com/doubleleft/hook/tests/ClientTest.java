@@ -13,9 +13,9 @@ public class ClientTest extends InstrumentationTestCase {
 		String appKey = "q1uU7tFtXnLad6FIGGn2cB+gxcx64/uPoDhqe2Zn5AE=";
 		String endpointURL = "http://dl-api.ddll.co";
 
-		Client client = new Client(null, endpointURL, appKey, appId);
-		assertEquals(client.url, endpointURL);
-		assertEquals(client.appId, appId);
-		assertEquals(client.key, appKey);
+		Client client = new Client(null);
+		assertEquals(client.getAppId(), appId);
+		assertEquals(client.getAppKey(), appKey);
+		assertEquals(client.getUrl(), endpointURL);
 	}
 }
