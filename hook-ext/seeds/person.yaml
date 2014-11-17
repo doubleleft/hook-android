@@ -1,0 +1,7 @@
+#
+# Seed for person
+#
+truncate: true
+data:
+  - name: First Person
+    age: 123

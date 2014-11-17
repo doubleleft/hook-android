@@ -1,0 +1,4 @@
+## Storage providers
+# microsoft/windowsazure: '0.4.0'
+# aws/aws-php-sdk: '2.7.*'
+# dropbox/dropbox-sdk: '1.1.*'
