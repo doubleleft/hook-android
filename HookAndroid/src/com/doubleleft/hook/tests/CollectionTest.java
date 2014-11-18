@@ -4,7 +4,6 @@ import java.util.concurrent.CountDownLatch;
 
 import org.json.JSONObject;
 
-import android.content.Context;
 import android.test.InstrumentationTestCase;
 import android.util.Log;
 
@@ -20,12 +19,6 @@ public class CollectionTest extends InstrumentationTestCase {
 	public String appId = "1";
 	public String appKey = "q1uU7tFtXnLad6FIGGn2cB+gxcx64/uPoDhqe2Zn5AE=";
 	public String endpointURL = "http://dl-api.ddll.co";
-
-	private Context context;
-
-	public CollectionTest(Context context) {
-		this.context = context;
-	}
 
 	public void testCreateAndFetch() throws Exception {
 
