@@ -1,11 +1,11 @@
-Hook-android
+hook-android
 ===
 
-Hook android client
+Java/Android client for [hook](https://github.com/doubleleft/hook)
 
 #About
 
-This is a port of the [JavaScript client](http://github.com/doubleleft/hook-javascript). The library is a native Android Library, with no external dependencies, targetting Android API Level 10. It doesn't require the JavaScript client either, the library communicates with hook's REST interface. 
+This is a port of the [JavaScript client](http://github.com/doubleleft/hook-javascript). The library is a native Android Library, with no external dependencies, targetting Android API Level 10. It doesn't require the JavaScript client either, the library communicates with hook's REST interface.
 
 #How to Use
 
