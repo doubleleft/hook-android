@@ -9,21 +9,19 @@ import org.json.JSONObject;
 
 import android.util.Log;
 
-import com.doubleleft.hook.exceptions.ClientNotSetupException;
-
 /**
- * Base Entity Class. Your model Classes should extend this Class.
- * 
+ * Base Model Class. Your model Classes should extend this Class.
+ *
  * @author lucas.tulio
- * 
+ *
  */
-public abstract class Entity {
+public abstract class Model {
 
 	public void create(Responder responder) throws ClientNotSetupException {
 
 		// Populate fields using Reflection
 		HashMap<String, Object> hashMap = new HashMap<String, Object>();
-		for (Field field : this.getEntityFields()) {
+		for (Field field : this.getModelFields()) {
 			try {
 				hashMap.put(field.getName().toLowerCase(Locale.getDefault()), field.get(this));
 			} catch (Exception e) {
@@ -32,27 +30,26 @@ public abstract class Entity {
 		}
 
 		// D-D-D-D-DROP THE BASS
-		Client client = new Client();
-		String collectionName = this.getEntityName();
+		String collectionName = this.getModelName();
 		final JSONObject jsonObject = new JSONObject(hashMap);
-		client.collection(collectionName).create(jsonObject, responder);
+		Client.instance.collection(collectionName).create(jsonObject, responder);
 	}
 
 	/**
 	 * Reflection method to return the table fields
-	 * 
+	 *
 	 * @return
 	 */
-	private Field[] getEntityFields() {
+	private Field[] getModelFields() {
 
 		ArrayList<Field> fields = new ArrayList<Field>();
 		for (Field field : this.getClass().getFields()) {
 
-			if (field.getDeclaringClass() != Entity.class) {
+			if (field.getDeclaringClass() != Model.class) {
 				Log.d("Reflection", "Field: " + field.getName());
 				fields.add(field);
 			} else {
-				Log.d("Reflection", "(Ignoring Entity field: " + field.getName() + ")");
+				Log.d("Reflection", "(Ignoring Model field: " + field.getName() + ")");
 			}
 		}
 
@@ -61,14 +58,14 @@ public abstract class Entity {
 
 	/**
 	 * Reflection method to return the table name
-	 * 
+	 *
 	 * @return
 	 */
-	private String getEntityName() {
+	private String getModelName() {
 		String fullClassName = this.getClass().getName().toLowerCase(Locale.getDefault());
 		String[] parts = fullClassName.split("\\.");
-		String entityName = parts[parts.length - 1];
-		Log.d("Reflection", "Entity name: " + entityName);
-		return entityName;
+		String modelName = parts[parts.length - 1];
+		Log.d("Reflection", "Model name: " + modelName);
+		return modelName;
 	}
 }

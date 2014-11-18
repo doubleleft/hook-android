@@ -13,44 +13,49 @@ import com.doubleleft.hook.exceptions.ClientNotSetupException;
  */
 public class Client {
 
-	public static String appId;
-	public static String appKey;
-	public static String url;
-	public static Context context;
-	
-	private final String CLIENT_EXCEPTION_MESSAGE = "Hook Client not setup. Please, set the values for the statics Client.appId, Client.appKey and Client.url accordingly.";
+	// Globally-available Client instance
+	public static Client instance;
+
+	private final String CLIENT_EXCEPTION_MESSAGE = "Hook Client not setup. Please, set the values for the statics Client.appId, Client.appKey and Client.endpoint accordingly.";
 	private final String AUTH_EXCEPTION_MESSAGE = "Context not set. Requests requiring authentication will not work. Allow Hook to setup authentication by setting Client.context to your app context.";
 
-	private KeyValues keys;
-	private Auth auth;
-	private Files files;
-	private System system;
+	public KeyValues keys;
+	public Auth auth;
+	public Files files;
+	public System system;
 
-	public Client() throws ClientNotSetupException {
+	protected String appId;
+	protected String key;
+	protected String endpoint;
 
-		// Check if the Client has been setup
-		if (appId == null || appKey == null || url == null) {
-			throw new ClientNotSetupException(CLIENT_EXCEPTION_MESSAGE);
-		}
+	protected Context context;
 
-		Log.d("hook", "appId = " + appId);
-		Log.d("hook", "appKey = " + appKey);
-		Log.d("hook", "url = " + url);
-		
-		// Check if Context is set
-		if (context != null) {
-			auth = new Auth(this, context);
-		} else {
-			try {
-				throw new AuthNotSetupException(AUTH_EXCEPTION_MESSAGE);
-			} catch (AuthNotSetupException e) {
-				Log.w("hook", e.getMessage());
-			}
-		}
-		
+	public static Client configure(Context context) {
+		Client instance = new Client(
+			context.getString(R.string.hook_appId),
+			context.getString(R.string.hook_appKey),
+			context.getString(R.string.hook_endpointUrl)
+		);
+
+		instance.setContext(context);
+		Client.instance = instance;
+
+		return instance;
+	}
+
+	public Client(String appId, String key, String endpoint) {
+		this.appId = appId;
+		this.key = key;
+		this.endpoint = endpoint;
+
+		Log.d("hook", "appId = " + this.appId);
+		Log.d("hook", "key = " + this.key);
+		Log.d("hook", "url = " + this.endpoint);
+
+		auth = new Auth(this);
 		keys = new KeyValues(this);
 		system = new System(this);
-		
+
 		// Not implemented yet
 		// files = new Files(this);
 	}
@@ -86,23 +91,12 @@ public class Client {
 		request.data = data;
 		request.addHeader("Content-Type", "application/json");
 		request.addHeader("X-App-Id", appId);
-		request.addHeader("X-App-Key", appKey);
+		request.addHeader("X-App-Key", key);
 
-		Log.d("dl-api", "request " + data.toString());
-		Log.d("dl-api", "URL_request " + url + "/" + segments);
+		Log.d("hook", "request " + data.toString());
+		Log.d("hook", "URL_request " + url + "/" + segments);
 
-		// Check if we can initialize the Auth object now
-		if (auth == null && context != null) {
-			auth = new Auth(this, context);
-		} else if (auth == null && context == null) {
-			try {
-				throw new AuthNotSetupException(AUTH_EXCEPTION_MESSAGE);
-			} catch (AuthNotSetupException e) {
-				Log.w("hook", e.getMessage());
-			}
-		}
-		
-		if (auth != null && auth.hasAuthToken()) {
+		if (auth.hasAuthToken()) {
 			request.addHeader("X-Auth-Token", auth.getAuthToken());
 		}
 
@@ -112,35 +106,24 @@ public class Client {
 		return request;
 	}
 
-	public KeyValues getKeys() {
-		return keys;
+	public void setContext(Context context) {
+		this.context = context;
 	}
 
-	public void setKeys(KeyValues keys) {
-		this.keys = keys;
+	public void getContext() {
+		return this.context;
 	}
 
-	public Auth getAuth() {
-		return auth;
+	public String getAppId() {
+		return this.appId;
 	}
 
-	public void setAuth(Auth auth) {
-		this.auth = auth;
+	public String getKey() {
+		return this.key;
 	}
 
-	public Files getFiles() {
-		return files;
+	public String getEndpoint() {
+		return this.endpoint;
 	}
 
-	public void setFiles(Files files) {
-		this.files = files;
-	}
-
-	public System getSystem() {
-		return system;
-	}
-
-	public void setSystem(System system) {
-		this.system = system;
-	}
 }

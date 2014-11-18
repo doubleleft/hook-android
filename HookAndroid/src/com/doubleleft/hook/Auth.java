@@ -15,31 +15,32 @@ public class Auth {
 	public static String PROVIDER_EMAIL = "email";
 	public static String PROVIDER_FACEBOOK = "facebook";
 
-	protected static String AUTH_TOKEN_KEY = "dl-api-auth-token";
-	protected static String AUTH_DATA_KEY = "dl-api-auth-data";
-	
+	protected static String AUTH_TOKEN_KEY = "hook-auth-token";
+	protected static String AUTH_DATA_KEY = "hook-auth-data";
+
 	protected SharedPreferences localStorage;
 	protected JSONObject _currentUser;
-	
+
 	protected Client client;
 
-	public Auth(Client client, Context context) {
-		
+	public Auth(Client client) {
 		this.client = client;
-		
-		if (context != null) {
-			localStorage = context.getSharedPreferences("dl-api-localStorage-" + Client.appId, Context.MODE_PRIVATE);
+
+		if (context == null) {
+			// throw new Exception ...
 		}
 
+		localStorage = client.getContext().getSharedPreferences("hook-localStorage-" + client.getAppId(), Context.MODE_PRIVATE);
+
 		if (localStorage != null) {
-			String currentUser = localStorage.getString(Client.appId + "-" + AUTH_DATA_KEY, null);
+			String currentUser = localStorage.getString(client.getAppId() + "-" + AUTH_DATA_KEY, null);
 			if (currentUser != null) {
 				try {
 					JSONObject user = (JSONObject) new JSONTokener(currentUser).nextValue();
 					setCurrentUser(user);
 
 				} catch (JSONException e) {
-					Log.d("dl-api", "error on Auth module " + e.toString());
+					Log.d("hook", "error on Auth module " + e.toString());
 				}
 			}
 		}
@@ -96,7 +97,7 @@ public class Auth {
 	}
 
 	public String getAuthToken() {
-		return localStorage != null ? localStorage.getString(Client.appId + "-" + AUTH_TOKEN_KEY, null) : null;
+		return localStorage != null ? localStorage.getString(client.getAppId() + "-" + AUTH_TOKEN_KEY, null) : null;
 	}
 
 	protected void setCurrentUser(JSONObject data) {
@@ -105,10 +106,10 @@ public class Auth {
 		if (localStorage != null) {
 			SharedPreferences.Editor editor = localStorage.edit();
 			if (_currentUser == null) {
-				editor.remove(Client.appId + "-" + AUTH_TOKEN_KEY);
-				editor.remove(Client.appId + "-" + AUTH_DATA_KEY);
+				editor.remove(client.getAppId() + "-" + AUTH_TOKEN_KEY);
+				editor.remove(client.getAppId() + "-" + AUTH_DATA_KEY);
 			} else {
-				editor.putString(Client.appId + "-" + AUTH_DATA_KEY, _currentUser.toString());
+				editor.putString(client.getAppId() + "-" + AUTH_DATA_KEY, _currentUser.toString());
 			}
 			editor.commit();
 		}
@@ -123,7 +124,7 @@ public class Auth {
 		if (tokenObject != null) {
 			if (localStorage != null) {
 				SharedPreferences.Editor editor = localStorage.edit();
-				editor.putString(Client.appId + "-" + AUTH_TOKEN_KEY, tokenObject.optString("token"));
+				editor.putString(client.getAppId() + "-" + AUTH_TOKEN_KEY, tokenObject.optString("token"));
 				editor.commit();
 			}
 			setCurrentUser(data);
