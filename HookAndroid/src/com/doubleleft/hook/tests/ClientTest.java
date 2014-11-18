@@ -1,5 +1,6 @@
 package com.doubleleft.hook.tests;
 
+import android.content.Context;
 import android.test.InstrumentationTestCase;
 
 import com.doubleleft.hook.Client;
@@ -9,9 +10,9 @@ import com.doubleleft.hook.Client;
  */
 public class ClientTest extends InstrumentationTestCase {
 
-	public void test() throws Exception {
-		assertNotNull(Client.appId);
-		assertNotNull(Client.appKey);
-		assertNotNull(Client.url);
+	public void test(Context context) throws Exception {
+		assertNotNull(Client.getInstance().getAppId());
+		assertNotNull(Client.getInstance().getAppKey());
+		assertNotNull(Client.getInstance().getEndpointUrl());
 	}
 }

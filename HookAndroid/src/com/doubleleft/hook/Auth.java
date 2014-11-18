@@ -24,13 +24,10 @@ public class Auth {
 	protected Client client;
 
 	public Auth(Client client) {
+
 		this.client = client;
 
-		if (context == null) {
-			// throw new Exception ...
-		}
-
-		localStorage = client.getContext().getSharedPreferences("hook-localStorage-" + client.getAppId(), Context.MODE_PRIVATE);
+		localStorage = Client.context.getSharedPreferences("hook-localStorage-" + client.getAppId(), Context.MODE_PRIVATE);
 
 		if (localStorage != null) {
 			String currentUser = localStorage.getString(client.getAppId() + "-" + AUTH_DATA_KEY, null);

@@ -11,7 +11,6 @@ import android.widget.Button;
 import com.doubleleft.hook.Client;
 import com.doubleleft.hook.Responder;
 import com.doubleleft.hook.Response;
-import com.doubleleft.hook.exceptions.ClientNotSetupException;
 import com.doubleleft.hook.samples.model.Person;
 
 public class MainActivity extends Activity {
@@ -23,24 +22,23 @@ public class MainActivity extends Activity {
 
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.main_activity);
+		this.context = this;
+		
+		// Setup Hook
+		Client.setup(this);
 
-		Client.configure(this);
-
+		// Button action
 		Button requestButton = (Button) this.findViewById(R.id.request_button);
 		requestButton.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				try {
-					((MainActivity) context).createNewPerson();
-				} catch (ClientNotSetupException e) {
-					Log.e("hook", e.getMessage());
-				}
+				((MainActivity) context).createNewPerson();
 			}
 		});
 	}
 
-	private void createNewPerson() throws ClientNotSetupException {
+	private void createNewPerson() {
 
 		Person person = new Person();
 		person.name = "Tulio";

@@ -5,8 +5,7 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.util.Log;
 
-import com.doubleleft.hook.exceptions.AuthNotSetupException;
-import com.doubleleft.hook.exceptions.ClientNotSetupException;
+import com.doubleleft.hookandroid.R;
 
 /**
  * Created by glaet on 2/28/14.
@@ -14,50 +13,64 @@ import com.doubleleft.hook.exceptions.ClientNotSetupException;
 public class Client {
 
 	// Globally-available Client instance
-	public static Client instance;
+	private static Client instance;
 
-	private final String CLIENT_EXCEPTION_MESSAGE = "Hook Client not setup. Please, set the values for the statics Client.appId, Client.appKey and Client.endpoint accordingly.";
-	private final String AUTH_EXCEPTION_MESSAGE = "Context not set. Requests requiring authentication will not work. Allow Hook to setup authentication by setting Client.context to your app context.";
+	// Extras
+	private KeyValues keys;
+	private Auth auth;
+	private Files files;
+	private System system;
 
-	public KeyValues keys;
-	public Auth auth;
-	public Files files;
-	public System system;
+	// Settings
+	private String appId;
+	private String appKey;
+	private String endpointUrl;
 
-	protected String appId;
-	protected String key;
-	protected String endpoint;
+	protected static Context context;
 
-	protected Context context;
+	/**
+	 * Provides a Context so Hook can read strings and access SharedPreferences
+	 * 
+	 * @param context
+	 */
+	public static void setup(Context context) {
 
-	public static Client configure(Context context) {
-		Client instance = new Client(
-			context.getString(R.string.hook_appId),
-			context.getString(R.string.hook_appKey),
-			context.getString(R.string.hook_endpointUrl)
-		);
+		// We need to get the ApplicationContext to prevent memory leaks
+		Client.context = context.getApplicationContext();
 
-		instance.setContext(context);
-		Client.instance = instance;
+		if (instance == null) {
+			instance = new Client(context.getString(R.string.hook_appId), context.getString(R.string.hook_appKey),
+					context.getString(R.string.hook_endpointUrl));
+			Log.d("hook", "Hook initialized");
+		}
+	}
 
+	/**
+	 * Returns the instance of the Client
+	 * 
+	 * @return
+	 */
+	public static Client getInstance() {
+		if (instance == null) {
+			throw new ExceptionInInitializerError("Context not found. You need to call Client.setup(context) at least once.");
+		}
 		return instance;
 	}
 
-	public Client(String appId, String key, String endpoint) {
+	private Client(String appId, String appKey, String endpointUrl) {
+
 		this.appId = appId;
-		this.key = key;
-		this.endpoint = endpoint;
+		this.appKey = appKey;
+		this.endpointUrl = endpointUrl;
 
 		Log.d("hook", "appId = " + this.appId);
-		Log.d("hook", "key = " + this.key);
-		Log.d("hook", "url = " + this.endpoint);
+		Log.d("hook", "key = " + this.appKey);
+		Log.d("hook", "url = " + this.endpointUrl);
 
 		auth = new Auth(this);
 		keys = new KeyValues(this);
 		system = new System(this);
-
-		// Not implemented yet
-		// files = new Files(this);
+		// files = new Files(this);	// Not implemented yet
 	}
 
 	public Collection collection(String collectionName) {
@@ -91,10 +104,10 @@ public class Client {
 		request.data = data;
 		request.addHeader("Content-Type", "application/json");
 		request.addHeader("X-App-Id", appId);
-		request.addHeader("X-App-Key", key);
+		request.addHeader("X-App-Key", appKey);
 
 		Log.d("hook", "request " + data.toString());
-		Log.d("hook", "URL_request " + url + "/" + segments);
+		Log.d("hook", "URL_request " + endpointUrl + "/" + segments);
 
 		if (auth.hasAuthToken()) {
 			request.addHeader("X-Auth-Token", auth.getAuthToken());
@@ -102,28 +115,47 @@ public class Client {
 
 		request.setResponder(responder);
 
-		request.execute(url + "/" + segments);
+		request.execute(endpointUrl + "/" + segments);
 		return request;
 	}
 
-	public void setContext(Context context) {
-		this.context = context;
-	}
-
-	public void getContext() {
-		return this.context;
-	}
-
 	public String getAppId() {
-		return this.appId;
+		return appId;
 	}
 
-	public String getKey() {
-		return this.key;
+	public void setAppId(String appId) {
+		this.appId = appId;
 	}
 
-	public String getEndpoint() {
-		return this.endpoint;
+	public String getAppKey() {
+		return appKey;
 	}
 
+	public void setAppKey(String appKey) {
+		this.appKey = appKey;
+	}
+
+	public String getEndpointUrl() {
+		return endpointUrl;
+	}
+
+	public void setEndpointUrl(String endpointUrl) {
+		this.endpointUrl = endpointUrl;
+	}
+
+	public KeyValues getKeys() {
+		return keys;
+	}
+
+	public Auth getAuth() {
+		return auth;
+	}
+
+	public Files getFiles() {
+		return files;
+	}
+
+	public System getSystem() {
+		return system;
+	}
 }

@@ -4,6 +4,7 @@ import java.util.concurrent.CountDownLatch;
 
 import org.json.JSONObject;
 
+import android.content.Context;
 import android.test.InstrumentationTestCase;
 import android.util.Log;
 
@@ -20,16 +21,22 @@ public class CollectionTest extends InstrumentationTestCase {
 	public String appKey = "q1uU7tFtXnLad6FIGGn2cB+gxcx64/uPoDhqe2Zn5AE=";
 	public String endpointURL = "http://dl-api.ddll.co";
 
+	private Context context;
+
+	public CollectionTest(Context context) {
+		this.context = context;
+	}
+
 	public void testCreateAndFetch() throws Exception {
+
 		final CountDownLatch signal = new CountDownLatch(1);
-		Client client = new Client();
 
 		JSONObject data = new JSONObject();
 		data.put("device", "Samsung Galaxy");
 		data.put("version", 10.0);
 		data.put("hasCameraSupport", true);
 
-		client.collection("android").create(data, new Responder() {
+		Client.getInstance().collection("android").create(data, new Responder() {
 			@Override
 			public void onSuccess(Response response) {
 				Log.d("dl-api", response.raw);
@@ -50,9 +57,9 @@ public class CollectionTest extends InstrumentationTestCase {
 	}
 
 	public void testWhere() throws Exception {
+
 		final CountDownLatch signal = new CountDownLatch(1);
-		Client client = new Client();
-		client.collection("android").where("version", 10).get(new Responder() {
+		Client.getInstance().collection("android").where("version", 10).get(new Responder() {
 			@Override
 			public void onSuccess(Response response) {
 				assertEquals("10", response.object.optString("version"));
@@ -70,17 +77,17 @@ public class CollectionTest extends InstrumentationTestCase {
 	}
 
 	public void testSort() throws Exception {
+
 		final CountDownLatch signal = new CountDownLatch(2);
-		final Client client = new Client();
 
 		JSONObject data = new JSONObject();
 		data.put("device", "Samsung Galaxy");
 		data.put("version", 5.0);
 
-		client.collection("android").create(data, new Responder() {
+		Client.getInstance().collection("android").create(data, new Responder() {
 			@Override
 			public void onSuccess(Response response) {
-				client.collection("android").sort("version", "desc").get(new Responder() {
+				Client.getInstance().collection("android").sort("version", "desc").get(new Responder() {
 					@Override
 					public void onSuccess(Response response) {
 						assertEquals("10", response.object.optString("version"));

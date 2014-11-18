@@ -11,13 +11,13 @@ import android.util.Log;
 
 /**
  * Base Model Class. Your model Classes should extend this Class.
- *
+ * 
  * @author lucas.tulio
- *
+ * 
  */
 public abstract class Model {
 
-	public void create(Responder responder) throws ClientNotSetupException {
+	public void create(Responder responder) {
 
 		// Populate fields using Reflection
 		HashMap<String, Object> hashMap = new HashMap<String, Object>();
@@ -32,12 +32,12 @@ public abstract class Model {
 		// D-D-D-D-DROP THE BASS
 		String collectionName = this.getModelName();
 		final JSONObject jsonObject = new JSONObject(hashMap);
-		Client.instance.collection(collectionName).create(jsonObject, responder);
+		Client.getInstance().collection(collectionName).create(jsonObject, responder);
 	}
 
 	/**
 	 * Reflection method to return the table fields
-	 *
+	 * 
 	 * @return
 	 */
 	private Field[] getModelFields() {
@@ -58,7 +58,7 @@ public abstract class Model {
 
 	/**
 	 * Reflection method to return the table name
-	 *
+	 * 
 	 * @return
 	 */
 	private String getModelName() {
