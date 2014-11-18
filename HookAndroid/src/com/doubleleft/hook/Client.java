@@ -142,20 +142,4 @@ public class Client {
 	public void setEndpointUrl(String endpointUrl) {
 		this.endpointUrl = endpointUrl;
 	}
-
-	public KeyValues getKeys() {
-		return keys;
-	}
-
-	public Auth getAuth() {
-		return auth;
-	}
-
-	public Files getFiles() {
-		return files;
-	}
-
-	public System getSystem() {
-		return system;
-	}
 }
