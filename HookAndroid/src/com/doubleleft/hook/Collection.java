@@ -37,89 +37,74 @@ public class Collection {
 		this.reset();
 	}
 
-	public void create(JSONObject data, Responder responder) {
-		JSONObject dataToPost = new JSONObject();
-		try {
-			dataToPost.put("data", data);
-
-		} catch (JSONException exception) {
-
-		}
-
-		client.post(this.segments, dataToPost, responder);
+	public Request create(JSONObject data) {
+		return client.post(this.segments, data);
 	}
 
-	public void get(Responder responder) {
-		client.get(this.segments, this.buildQuery(), responder);
+	public Request get() {
+		return client.get(this.segments, this.buildQuery());
 	}
 
-	public void first(Responder responder) {
+	public Request first() {
 		_options.first = true;
-		this.get(responder);
+		return this.get();
 	}
 
-	public void firstOrCreate(Responder responder) {
+	public Request firstOrCreate(JSONObject data) {
 		// TODO: implement firstOrCreate method
 		throw new Error("Not implemented");
 	}
 
-	public void count(Responder responder) {
+	public Request count() {
 		_options.aggregation = new CollectionOptionItem("count", null, null);
-		this.get(responder);
+		return this.get();
 	}
 
-	public void max(String field, Responder responder) {
+	public Request max(String field) {
 		_options.aggregation = new CollectionOptionItem("max", field, null);
-		this.get(responder);
+		return this.get();
 	}
 
-	public void min(String field, Responder responder) {
+	public Request min(String field) {
 		_options.aggregation = new CollectionOptionItem("min", field, null);
-		this.get(responder);
+		return this.get();
 	}
 
-	public void avg(String field, Responder responder) {
+	public Request avg(String field) {
 		_options.aggregation = new CollectionOptionItem("avg", field, null);
-		this.get(responder);
+		return this.get();
 	}
 
-	public void sum(String field, Responder responder) {
+	public Request sum(String field) {
 		_options.aggregation = new CollectionOptionItem("sum", field, null);
-		this.get(responder);
+		return this.get();
 	}
 
-	public void update(int id, JSONObject data, Responder responder) {
-		JSONObject dataToPost = new JSONObject();
-		try {
-			dataToPost.put("data", data);
-
-		} catch (JSONException exception) {
-
-		}
-		client.post(this.segments + "/" + id, dataToPost, responder);
+	public Request update(int id, JSONObject data) {
+		return client.post(this.segments + "/" + id, data);
 	}
 
-	public void updateAll(JSONObject data, Responder responder) {
+	public Request updateAll(JSONObject data) {
 		_options.data = data;
-		client.put(this.segments, this.buildQuery(), responder);
+		return client.put(this.segments, this.buildQuery());
 	}
 
-	public void increment(String field, Object value, Responder responder) {
+	public Request increment(String field, Object value) {
 		_options.operation = new CollectionOptionItem("increment", field, value);
-		client.put(this.segments, this.buildQuery(), responder);
+		return client.put(this.segments, this.buildQuery());
 	}
 
-	public void decrement(String field, Object value, Responder responder) {
+	public Request decrement(String field, Object value) {
 		_options.operation = new CollectionOptionItem("decrement", field, value);
-		client.put(this.segments, this.buildQuery(), responder);
+		return client.put(this.segments, this.buildQuery());
 	}
 
-	public void remove(int id, Responder responder) {
-		client.remove(this.segments + "/" + id, responder);
+	public Request remove(int id) {
+		return client.remove(this.segments + "/" + id);
 	}
 
-	public void drop(Responder responder) {
-		client.remove(this.segments, responder);
+	public Request drop() {
+		return client.remove(this.segments);
 	}
 
 	public Collection where(String field, Object value) {

@@ -35,8 +35,9 @@ public class Request extends AsyncTask<String, String, String> {
 		headers = new HashMap<String, String>();
 	}
 
-	public void setResponder(Responder responder) {
+	public Request setResponder(Responder responder) {
 		this.responder = responder;
+		return this;
 	}
 
 	public void addHeader(String name, String value) {

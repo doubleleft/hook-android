@@ -43,10 +43,10 @@ public class Auth {
 		}
 	}
 
-	public void authenticate(String provider, JSONObject data, Responder responder) {
+	public void register(JSONObject data, Responder responder) {
 		final Responder clientResponder = responder;
 
-		client.post("auth/" + provider, data, new Responder() {
+		client.post("auth/email", data, new Responder() {
 			@Override
 			public void onSuccess(Response response) {
 				registerToken(response.object);
@@ -60,10 +60,10 @@ public class Auth {
 		});
 	}
 
-	public void verify(String provider, JSONObject data, Responder responder) {
+	public void login(JSONObject data, Responder responder) {
 		final Responder clientResponder = responder;
 
-		client.post("auth/" + provider + "/verify", data, new Responder() {
+		client.post("auth/email/login", data, new Responder() {
 			@Override
 			public void onSuccess(Response response) {
 				registerToken(response.object);
@@ -78,11 +78,11 @@ public class Auth {
 	}
 
 	public void forgotPassword(JSONObject data, Responder responder) {
-		client.post("auth/" + PROVIDER_EMAIL + "/forgotPassword", data, responder);
+		client.post("auth/email/forgotPassword", data, responder);
 	}
 
 	public void resetPassword(JSONObject data, Responder responder) {
-		client.post("auth/" + PROVIDER_EMAIL + "/resetPassword", data, responder);
+		client.post("auth/email/resetPassword", data, responder);
 	}
 
 	public void logout() {

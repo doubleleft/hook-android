@@ -1,7 +1,14 @@
 hook-android
 ===
 
-Java/Android client for [hook](https://github.com/doubleleft/hook)
+Java/Android client for [hook](https://github.com/doubleleft/hook).
+
+TODO
+---
+
+- Use [android-async-http](https://github.com/loopj/android-async-http/) on
+  Request class.
+- Use SQLite to store Auth data.
 
 #About
 

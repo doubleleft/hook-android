@@ -16,10 +16,10 @@ public class Client {
 	private static Client instance;
 
 	// Extras
-	private KeyValues keys;
-	private Auth auth;
-	private Files files;
-	private System system;
+	public KeyValues keys;
+	public Auth auth;
+	public Files files;
+	public System system;
 
 	// Settings
 	private String appId;
@@ -30,7 +30,7 @@ public class Client {
 
 	/**
 	 * Provides a Context so Hook can read strings and access SharedPreferences
-	 * 
+	 *
 	 * @param context
 	 */
 	public static void setup(Context context) {
@@ -47,7 +47,7 @@ public class Client {
 
 	/**
 	 * Returns the instance of the Client
-	 * 
+	 *
 	 * @return
 	 */
 	public static Client getInstance() {
@@ -70,7 +70,6 @@ public class Client {
 		auth = new Auth(this);
 		keys = new KeyValues(this);
 		system = new System(this);
-		// files = new Files(this);	// Not implemented yet
 	}
 
 	public Collection collection(String collectionName) {
@@ -82,23 +81,23 @@ public class Client {
 		throw new Error("Channel API not implemented");
 	}
 
-	public Request get(String segments, JSONObject data, Responder responder) {
-		return this.request(segments, "GET", data, responder);
+	public Request get(String segments, JSONObject data) {
+		return this.request(segments, "GET", data);
 	}
 
-	public Request post(String segments, JSONObject data, Responder responder) {
-		return this.request(segments, "POST", data, responder);
+	public Request post(String segments, JSONObject data) {
+		return this.request(segments, "POST", data);
 	}
 
-	public Request put(String segments, JSONObject data, Responder responder) {
-		return this.request(segments, "PUT", data, responder);
+	public Request put(String segments, JSONObject data) {
+		return this.request(segments, "PUT", data);
 	}
 
-	public Request remove(String segments, Responder responder) {
-		return this.request(segments, "DELETE", null, responder);
+	public Request remove(String segments) {
+		return this.request(segments, "DELETE", null);
 	}
 
-	public Request request(String segments, String method, JSONObject data, Responder responder) {
+	public Request request(String segments, String method, JSONObject data) {
 		Request request = new Request();
 		request.method = method;
 		request.data = data;
@@ -112,8 +111,6 @@ public class Client {
 		if (auth.hasAuthToken()) {
 			request.addHeader("X-Auth-Token", auth.getAuthToken());
 		}
-
-		request.setResponder(responder);
 
 		request.execute(endpointUrl + "/" + segments);
 		return request;
