@@ -7,7 +7,7 @@ TODO
 ---
 
 - Use [android-async-http](https://github.com/loopj/android-async-http/) on
-  Request class.
+  Request class. ([example](https://github.com/loopj/android-async-http/blob/1.4.6/sample/src/main/java/com/loopj/android/http/sample/JsonSample.java))
 - Use SQLite to store Auth data.
 
 #About
