@@ -28,11 +28,10 @@ Client client = new Client(context, endpointURL, appKey, appId);
 ### Create Collection Item
 ```java
 JSONObject data = new JSONObject();
-data.put("device", "Samsung Galaxy");
-data.put("version", 10.0);
-data.put("hasCameraSupport", true);
+data.put("name", "My Book Name");
+data.put("edition", 1.0);
 
-client.collection("android").create(data, new Responder() {
+client.collection("books").create(data, new Responder() {
 	@Override
 	public void onSuccess(Response response) {
 		Log.d("hook", response.raw);
@@ -54,10 +53,10 @@ client.collection("android").create(data, new Responder() {
 
 ### Fetching (and filtering) items
 ```java
-client.collection("android").where("version", 10).get(new Responder() {
+client.collection("books").where("edition", 1).get(new Responder() {
 	@Override
 	public void onSuccess(Response response) {
-		Log.d("hook", response.object.optString("version"));
+		Log.d("hook", response.object.optString("name"));
 	}
 
 	@Override
@@ -81,29 +80,25 @@ client.collection("android").where("version", 10).get(new Responder() {
 - See [Collection.java](https://github.com/doubleleft/hook-android/blob/master/lib/dlapi/src/main/java/com/doubleleft/api/Collection.java) for better reference
 
 ### Authentication: create user
+
 ```java
 JSONObject data = new JSONObject();
 data.put("email", "gabriel@doubleleft.com");
 data.put("name", "Gabriel Laet");
 data.put("password", "123");
-client.auth.authenticate(Auth.PROVIDER_EMAIL, data, responder);
+client.auth.register(data, responder);
 ```
-Once the user is created, you don't need to verify/login again. The library also takes care to store the current user internally.
 
-### Authentication: create user w/ Facebook
-```java
-JSONObject data = new JSONObject();
-data.put("accessToken", "asdasdasd12341243123");
-data.put("userID", "21313");
-client.auth.authenticate(Auth.PROVIDER_FACEBOOK, data, responder);
-```
+Once the user is created, you don't need to verify/login again.
+The library also takes care to store the current user internally.
 
 ### Authentication: login user
+
 ```java
 JSONObject data = new JSONObject();
 data.put("email", "gabriel@doubleleft.com");
 data.put("password", "123");
-client.auth.verify(Auth.PROVIDER_EMAIL, data, responder);
+client.auth.login(data, responder);
 ```
 
 ### Authentication: other methods
@@ -112,5 +107,5 @@ client.auth.verify(Auth.PROVIDER_EMAIL, data, responder);
 - `logout`
 - `getAuthToken`
 - `hasAuthToken`
-- See [Auth.java](https://github.com/doubleleft/hook-android/blob/master/lib/dlapi/src/main/java/com/doubleleft/api/Auth.java) for better reference
 
+- See [Auth.java](https://github.com/doubleleft/hook-android/blob/master/lib/dlapi/src/main/java/com/doubleleft/api/Auth.java) for better reference
