@@ -4,6 +4,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import com.loopj.android.http.*;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -12,14 +14,11 @@ import android.util.Log;
  * Created by glaet on 2/28/14.
  */
 public class Auth {
-	public static String PROVIDER_EMAIL = "email";
-	public static String PROVIDER_FACEBOOK = "facebook";
-
 	protected static String AUTH_TOKEN_KEY = "hook-auth-token";
 	protected static String AUTH_DATA_KEY = "hook-auth-data";
 
 	protected SharedPreferences localStorage;
-	protected JSONObject _currentUser;
+	protected RequestParams _currentUser;
 
 	protected Client client;
 
@@ -43,8 +42,25 @@ public class Auth {
 		}
 	}
 
-	public void register(JSONObject data, Responder responder) {
+	public void register(RequestParams data, Responder responder) {
 		final Responder clientResponder = responder;
+
+		client.post("auth/email", data, new JsonHttpResponseHandler() {
+			@Override
+			public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+				// If the response is JSONObject instead of expected JSONArray
+			}
+
+			@Override
+			public void onSuccess(int statusCode, Header[] headers, JSONArray timeline) {
+				// Pull out the first event on the public timeline
+				JSONObject firstEvent = timeline.get(0);
+				String tweetText = firstEvent.getString("text");
+
+				// Do something with the response
+				System.out.println(tweetText);
+			}
+		});
 
 		client.post("auth/email", data, new Responder() {
 			@Override
@@ -60,7 +76,7 @@ public class Auth {
 		});
 	}
 
-	public void login(JSONObject data, Responder responder) {
+	public void login(RequestParams data, Responder responder) {
 		final Responder clientResponder = responder;
 
 		client.post("auth/email/login", data, new Responder() {
@@ -77,11 +93,11 @@ public class Auth {
 		});
 	}
 
-	public void forgotPassword(JSONObject data, Responder responder) {
+	public void forgotPassword(RequestParams data, Responder responder) {
 		client.post("auth/email/forgotPassword", data, responder);
 	}
 
-	public void resetPassword(JSONObject data, Responder responder) {
+	public void resetPassword(RequestParams data, Responder responder) {
 		client.post("auth/email/resetPassword", data, responder);
 	}
 
@@ -97,7 +113,7 @@ public class Auth {
 		return localStorage != null ? localStorage.getString(client.getAppId() + "-" + AUTH_TOKEN_KEY, null) : null;
 	}
 
-	protected void setCurrentUser(JSONObject data) {
+	protected void setCurrentUser(RequestParams data) {
 		_currentUser = data;
 
 		if (localStorage != null) {
@@ -112,12 +128,12 @@ public class Auth {
 		}
 	}
 
-	public JSONObject getCurrentUser() {
+	public RequestParams getCurrentUser() {
 		return _currentUser;
 	}
 
-	protected void registerToken(JSONObject data) {
-		JSONObject tokenObject = data.optJSONObject("token");
+	protected void registerToken(RequestParams data) {
+		RequestParams tokenObject = data.optJSONObject("token");
 		if (tokenObject != null) {
 			if (localStorage != null) {
 				SharedPreferences.Editor editor = localStorage.edit();

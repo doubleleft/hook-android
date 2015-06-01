@@ -1,7 +1,7 @@
 hook-android
 ===
 
-Java/Android client for [hook](https://github.com/doubleleft/hook).
+Android client for [hook](https://github.com/doubleleft/hook).
 
 TODO
 ---

@@ -2,9 +2,9 @@ package com.doubleleft.hook;
 
 import java.util.Vector;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.loopj.android.http.RequestHandle;
+import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.ResponseHandlerInterface;
 
 import android.annotation.SuppressLint;
 import android.util.Log;
@@ -37,74 +37,75 @@ public class Collection {
 		this.reset();
 	}
 
-	public Request create(JSONObject data) {
-		return client.post(this.segments, data);
+	public RequestHandle create(RequestParams data, ResponseHandlerInterface responseHandler) {
+		return client.post(this.segments, data, responseHandler);
 	}
 
-	public Request get() {
-		return client.get(this.segments, this.buildQuery());
+	public RequestHandle get(ResponseHandlerInterface responseHandler) {
+		return client.get(this.segments, this.buildQuery(), responseHandler);
 	}
 
-	public Request first() {
+	public RequestHandle first(ResponseHandlerInterface responseHandler) {
 		_options.first = true;
-		return this.get();
+		return this.get(responseHandler);
 	}
 
-	public Request firstOrCreate(JSONObject data) {
+	public RequestHandle firstOrCreate(RequestParams data, ResponseHandlerInterface responseHandler) {
+		_options.first = true;
 		// TODO: implement firstOrCreate method
 		throw new Error("Not implemented");
 	}
 
-	public Request count() {
+	public RequestHandle count(ResponseHandlerInterface responseHandler) {
 		_options.aggregation = new CollectionOptionItem("count", null, null);
-		return this.get();
+		return this.get(responseHandler);
 	}
 
-	public Request max(String field) {
+	public RequestHandle max(String field, ResponseHandlerInterface responseHandler) {
 		_options.aggregation = new CollectionOptionItem("max", field, null);
-		return this.get();
+		return this.get(responseHandler);
 	}
 
-	public Request min(String field) {
+	public RequestHandle min(String field, ResponseHandlerInterface responseHandler) {
 		_options.aggregation = new CollectionOptionItem("min", field, null);
-		return this.get();
+		return this.get(responseHandler);
 	}
 
-	public Request avg(String field) {
+	public RequestHandle avg(String field, ResponseHandlerInterface responseHandler) {
 		_options.aggregation = new CollectionOptionItem("avg", field, null);
-		return this.get();
+		return this.get(responseHandler);
 	}
 
-	public Request sum(String field) {
+	public RequestHandle sum(String field, ResponseHandlerInterface responseHandler) {
 		_options.aggregation = new CollectionOptionItem("sum", field, null);
-		return this.get();
+		return this.get(responseHandler);
 	}
 
-	public Request update(int id, JSONObject data) {
-		return client.post(this.segments + "/" + id, data);
+	public RequestHandle update(int id, RequestParams data, ResponseHandlerInterface responseHandler) {
+		return client.post(this.segments + "/" + id, data, responseHandler);
 	}
 
-	public Request updateAll(JSONObject data) {
+	public RequestHandle updateAll(RequestParams data, ResponseHandlerInterface responseHandler) {
 		_options.data = data;
-		return client.put(this.segments, this.buildQuery());
+		return client.put(this.segments, this.buildQuery(), responseHandler);
 	}
 
-	public Request increment(String field, Object value) {
+	public RequestHandle increment(String field, Object value, ResponseHandlerInterface responseHandler) {
 		_options.operation = new CollectionOptionItem("increment", field, value);
-		return client.put(this.segments, this.buildQuery());
+		return client.put(this.segments, this.buildQuery(), responseHandler);
 	}
 
-	public Request decrement(String field, Object value) {
+	public RequestHandle decrement(String field, Object value, ResponseHandlerInterface responseHandler) {
 		_options.operation = new CollectionOptionItem("decrement", field, value);
-		return client.put(this.segments, this.buildQuery());
+		return client.put(this.segments, this.buildQuery(), responseHandler);
 	}
 
-	public Request remove(int id) {
-		return client.remove(this.segments + "/" + id);
+	public RequestHandle remove(int id, ResponseHandlerInterface responseHandler) {
+		return client.remove(this.segments + "/" + id, responseHandler);
 	}
 
-	public Request drop() {
-		return client.remove(this.segments);
+	public RequestHandle drop(ResponseHandlerInterface responseHandler) {
+		return client.remove(this.segments, responseHandler);
 	}
 
 	public Collection where(String field, Object value) {
@@ -149,8 +150,8 @@ public class Collection {
 		return this;
 	}
 
-	protected JSONObject buildQuery() {
-		JSONObject query = new JSONObject();
+	protected RequestParams buildQuery() {
+		RequestParams query = new RequestParams();
 
 		try {
 			if (_limit != null) {
@@ -204,7 +205,7 @@ public class Collection {
 			}
 
 		} catch (JSONException e) {
-			Log.d("dl-api", "error building query " + e.toString());
+			Log.d("hook", "error building query " + e.toString());
 		}
 
 		this.reset(); // clear for future calls
@@ -222,7 +223,7 @@ public class Collection {
 
 	class CollectionOptions {
 		public boolean first;
-		public JSONObject data;
+		public RequestParams data;
 		public CollectionOptionItem aggregation;
 		public CollectionOptionItem operation;
 
@@ -245,12 +246,12 @@ public class Collection {
 			this.value = value;
 		}
 
-		public JSONObject toJSON() {
-			JSONObject json = new JSONObject();
+		public RequestParams toJSON() {
+			RequestParams json = new RequestParams();
 			try {
-				json.putOpt("method", method == null ? JSONObject.NULL : method);
-				json.putOpt("field", field == null ? JSONObject.NULL : field);
-				json.putOpt("value", value == null ? JSONObject.NULL : value);
+				json.putOpt("method", method == null ? RequestParams.NULL : method);
+				json.putOpt("field", field == null ? RequestParams.NULL : field);
+				json.putOpt("value", value == null ? RequestParams.NULL : value);
 
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -273,9 +274,9 @@ public class Collection {
 
 		public Object toJSON() {
 			JSONArray json = new JSONArray();
-			json.put(field == null ? JSONObject.NULL : field);
-			json.put(operation == null ? JSONObject.NULL : operation.toLowerCase());
-			json.put(value == null ? JSONObject.NULL : value);
+			json.put(field == null ? RequestParams.NULL : field);
+			json.put(operation == null ? RequestParams.NULL : operation.toLowerCase());
+			json.put(value == null ? RequestParams.NULL : value);
 			return json;
 		}
 
@@ -290,11 +291,11 @@ public class Collection {
 			this.direction = direction;
 		}
 
-		public JSONObject toJSON() {
-			JSONObject json = new JSONObject();
+		public RequestParams toJSON() {
+			RequestParams json = new RequestParams();
 			try {
-				json.putOpt("field", field == null ? JSONObject.NULL : field);
-				json.putOpt("direction", direction == null ? JSONObject.NULL : direction);
+				json.putOpt("field", field == null ? RequestParams.NULL : field);
+				json.putOpt("direction", direction == null ? RequestParams.NULL : direction);
 
 			} catch (JSONException e) {
 				e.printStackTrace();

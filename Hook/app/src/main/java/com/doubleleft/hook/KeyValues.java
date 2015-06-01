@@ -1,7 +1,7 @@
 package com.doubleleft.hook;
 
 import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.RequestParams;
 
 import android.util.Log;
 
@@ -20,7 +20,7 @@ public class KeyValues {
 	}
 
 	public void set(String key, Object value, Responder responder) {
-		JSONObject data = new JSONObject();
+		RequestParams data = new RequestParams();
 		try {
 			data.putOpt("value", value);
 

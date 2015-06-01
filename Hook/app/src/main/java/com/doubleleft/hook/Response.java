@@ -1,13 +1,13 @@
 package com.doubleleft.hook;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
+import org.json.RequestParams;
 
 /**
  * Created by glaet on 2/28/14.
  */
 public class Response {
-	public JSONObject object;
+	public RequestParams object;
 	public JSONArray array;
 	public String raw;
 	public int code;

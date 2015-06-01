@@ -2,7 +2,7 @@ package com.doubleleft.hook.tests;
 
 import java.util.concurrent.CountDownLatch;
 
-import org.json.JSONObject;
+import org.json.RequestParams;
 
 import android.test.InstrumentationTestCase;
 import android.util.Log;
@@ -24,7 +24,7 @@ public class CollectionTest extends InstrumentationTestCase {
 
 		final CountDownLatch signal = new CountDownLatch(1);
 
-		JSONObject data = new JSONObject();
+		RequestParams data = new RequestParams();
 		data.put("device", "Samsung Galaxy");
 		data.put("version", 10.0);
 		data.put("hasCameraSupport", true);
@@ -73,7 +73,7 @@ public class CollectionTest extends InstrumentationTestCase {
 
 		final CountDownLatch signal = new CountDownLatch(2);
 
-		JSONObject data = new JSONObject();
+		RequestParams data = new RequestParams();
 		data.put("device", "Samsung Galaxy");
 		data.put("version", 5.0);
 
