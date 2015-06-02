@@ -5,9 +5,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 
-import org.json.RequestParams;
-
 import android.util.Log;
+
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 /**
  * Base Model Class. Your model Classes should extend this Class.
@@ -17,7 +18,7 @@ import android.util.Log;
  */
 public abstract class Model {
 
-	public void create(Responder responder) {
+	public void create(AsyncHttpResponseHandler responseHandler) {
 
 		// Populate fields using Reflection
 		HashMap<String, Object> hashMap = new HashMap<String, Object>();
@@ -31,8 +32,8 @@ public abstract class Model {
 
 		// D-D-D-D-DROP THE BASS
 		String collectionName = this.getModelName();
-		final RequestParams RequestParams = new RequestParams(hashMap);
-		Client.getInstance().collection(collectionName).create(RequestParams, responder);
+		RequestParams RequestParams = new RequestParams(hashMap);
+		Client.getInstance().collection(collectionName).create(RequestParams, responseHandler);
 	}
 
 	/**

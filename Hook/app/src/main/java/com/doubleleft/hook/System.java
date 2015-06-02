@@ -1,5 +1,7 @@
 package com.doubleleft.hook;
 
+import com.loopj.android.http.AsyncHttpResponseHandler;
+
 /**
  * Created by glaet on 2/28/14.
  */
@@ -11,7 +13,7 @@ public class System {
 		this.client = client;
 	}
 
-	public void time(Responder responder) {
-		this.client.get("system/time", null, responder);
+	public void time(AsyncHttpResponseHandler responseHandler) {
+		this.client.get("system/time", null, responseHandler);
 	}
 }

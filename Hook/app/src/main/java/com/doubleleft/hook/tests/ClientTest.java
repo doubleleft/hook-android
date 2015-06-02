@@ -13,6 +13,6 @@ public class ClientTest extends InstrumentationTestCase {
 	public void test(Context context) throws Exception {
 		assertNotNull(Client.getInstance().getAppId());
 		assertNotNull(Client.getInstance().getAppKey());
-		assertNotNull(Client.getInstance().getEndpointUrl());
+		assertNotNull(Client.getInstance().getEndpoint());
 	}
 }

@@ -1,8 +1,8 @@
 package com.doubleleft.hook;
 
 import com.loopj.android.http.*;
-import com.loopj.android.http.RequestParams;
 
+import android.content.Context;
 import android.util.Log;
 
 /**
@@ -13,6 +13,8 @@ public class Client {
 	// Globally-available Client instance
 	private static Client instance;
     private static AsyncHttpClient httpClient = new AsyncHttpClient();
+
+	public static Context context;
 
 	// Extras
 	public KeyValues keys;
@@ -36,7 +38,7 @@ public class Client {
 		return instance;
 	}
 
-	public Client(String appId, String appKey, String endpoint) {
+	public Client(Context context, String appId, String appKey, String endpoint) {
 		this.appId = appId;
 		this.appKey = appKey;
 		this.endpoint= endpoint;
@@ -51,6 +53,7 @@ public class Client {
 
 		// Singleton
 		instance = this;
+		instance.context = context;
 	}
 
 	public Collection collection(String collectionName) {
@@ -62,25 +65,25 @@ public class Client {
 		throw new Error("Channel API not implemented");
 	}
 
-	public RequestHandle get(String segments, RequestParams data, ResponseHandlerInterface responseHandler) {
-		this.request(segments, "GET", data, responseHandler);
+	public RequestHandle get(String segments, RequestParams data, AsyncHttpResponseHandler responseHandler) {
+		return this.request(segments, "GET", data, responseHandler);
 	}
 
-	public RequestHandle post(String segments, RequestParams data, ResponseHandlerInterface responseHandler) {
-		this.request(segments, "POST", data, responseHandler);
+	public RequestHandle post(String segments, RequestParams data, AsyncHttpResponseHandler responseHandler) {
+		return this.request(segments, "POST", data, responseHandler);
 	}
 
-	public RequestHandle put(String segments, RequestParams data, ResponseHandlerInterface responseHandler) {
-		this.request(segments, "PUT", data, responseHandler);
+	public RequestHandle put(String segments, RequestParams data, AsyncHttpResponseHandler responseHandler) {
+		return this.request(segments, "PUT", data, responseHandler);
 	}
 
-	public RequestHandle remove(String segments, ResponseHandlerInterface responseHandler) {
+	public RequestHandle remove(String segments, AsyncHttpResponseHandler responseHandler) {
         // Send empty request params
         RequestParams params = new RequestParams();
-        this.request(segments, "DELETE", params, responseHandler);
+		return this.request(segments, "DELETE", params, responseHandler);
 	}
 
-	public RequestHandle request(String segments, String method, RequestParams data, ResponseHandlerInterface responseHandler) {
+	public RequestHandle request(String segments, String method, RequestParams data, AsyncHttpResponseHandler responseHandler) {
 
         // Request headers
         httpClient.addHeader("Content-Type", "application/json");
@@ -130,11 +133,11 @@ public class Client {
 		this.appKey = appKey;
 	}
 
-	public String getEndpointUrl() {
-		return endpointUrl;
+	public String getEndpoint() {
+		return endpoint;
 	}
 
-	public void setEndpointUrl(String endpointUrl) {
-		this.endpointUrl = endpointUrl;
+	public void setEndpoint(String endpointUrl) {
+		this.endpoint = endpointUrl;
 	}
 }

@@ -1,4 +1,4 @@
-hook-android
+hook-android [![Download](https://api.bintray.com/packages/endel/maven/hook-android/images/download.svg)  ](https://bintray.com/endel/maven/hook-android/_latestVersion)
 ===
 
 Android client for [hook](https://github.com/doubleleft/hook).

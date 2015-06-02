@@ -4,10 +4,13 @@ import java.util.Vector;
 
 import com.loopj.android.http.RequestHandle;
 import com.loopj.android.http.RequestParams;
-import com.loopj.android.http.ResponseHandlerInterface;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import android.annotation.SuppressLint;
 import android.util.Log;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 /**
  * Created by glaet on 2/28/14.
@@ -37,74 +40,74 @@ public class Collection {
 		this.reset();
 	}
 
-	public RequestHandle create(RequestParams data, ResponseHandlerInterface responseHandler) {
+	public RequestHandle create(RequestParams data, AsyncHttpResponseHandler responseHandler) {
 		return client.post(this.segments, data, responseHandler);
 	}
 
-	public RequestHandle get(ResponseHandlerInterface responseHandler) {
+	public RequestHandle get(AsyncHttpResponseHandler responseHandler) {
 		return client.get(this.segments, this.buildQuery(), responseHandler);
 	}
 
-	public RequestHandle first(ResponseHandlerInterface responseHandler) {
+	public RequestHandle first(AsyncHttpResponseHandler responseHandler) {
 		_options.first = true;
 		return this.get(responseHandler);
 	}
 
-	public RequestHandle firstOrCreate(RequestParams data, ResponseHandlerInterface responseHandler) {
+	public RequestHandle firstOrCreate(RequestParams data, AsyncHttpResponseHandler responseHandler) {
 		_options.first = true;
 		// TODO: implement firstOrCreate method
 		throw new Error("Not implemented");
 	}
 
-	public RequestHandle count(ResponseHandlerInterface responseHandler) {
+	public RequestHandle count(AsyncHttpResponseHandler responseHandler) {
 		_options.aggregation = new CollectionOptionItem("count", null, null);
 		return this.get(responseHandler);
 	}
 
-	public RequestHandle max(String field, ResponseHandlerInterface responseHandler) {
+	public RequestHandle max(String field, AsyncHttpResponseHandler responseHandler) {
 		_options.aggregation = new CollectionOptionItem("max", field, null);
 		return this.get(responseHandler);
 	}
 
-	public RequestHandle min(String field, ResponseHandlerInterface responseHandler) {
+	public RequestHandle min(String field, AsyncHttpResponseHandler responseHandler) {
 		_options.aggregation = new CollectionOptionItem("min", field, null);
 		return this.get(responseHandler);
 	}
 
-	public RequestHandle avg(String field, ResponseHandlerInterface responseHandler) {
+	public RequestHandle avg(String field, AsyncHttpResponseHandler responseHandler) {
 		_options.aggregation = new CollectionOptionItem("avg", field, null);
 		return this.get(responseHandler);
 	}
 
-	public RequestHandle sum(String field, ResponseHandlerInterface responseHandler) {
+	public RequestHandle sum(String field, AsyncHttpResponseHandler responseHandler) {
 		_options.aggregation = new CollectionOptionItem("sum", field, null);
 		return this.get(responseHandler);
 	}
 
-	public RequestHandle update(int id, RequestParams data, ResponseHandlerInterface responseHandler) {
+	public RequestHandle update(int id, RequestParams data, AsyncHttpResponseHandler responseHandler) {
 		return client.post(this.segments + "/" + id, data, responseHandler);
 	}
 
-	public RequestHandle updateAll(RequestParams data, ResponseHandlerInterface responseHandler) {
+	public RequestHandle updateAll(RequestParams data, AsyncHttpResponseHandler responseHandler) {
 		_options.data = data;
 		return client.put(this.segments, this.buildQuery(), responseHandler);
 	}
 
-	public RequestHandle increment(String field, Object value, ResponseHandlerInterface responseHandler) {
+	public RequestHandle increment(String field, Object value, AsyncHttpResponseHandler responseHandler) {
 		_options.operation = new CollectionOptionItem("increment", field, value);
 		return client.put(this.segments, this.buildQuery(), responseHandler);
 	}
 
-	public RequestHandle decrement(String field, Object value, ResponseHandlerInterface responseHandler) {
+	public RequestHandle decrement(String field, Object value, AsyncHttpResponseHandler responseHandler) {
 		_options.operation = new CollectionOptionItem("decrement", field, value);
 		return client.put(this.segments, this.buildQuery(), responseHandler);
 	}
 
-	public RequestHandle remove(int id, ResponseHandlerInterface responseHandler) {
+	public RequestHandle remove(int id, AsyncHttpResponseHandler responseHandler) {
 		return client.remove(this.segments + "/" + id, responseHandler);
 	}
 
-	public RequestHandle drop(ResponseHandlerInterface responseHandler) {
+	public RequestHandle drop(AsyncHttpResponseHandler responseHandler) {
 		return client.remove(this.segments, responseHandler);
 	}
 
@@ -153,59 +156,54 @@ public class Collection {
 	protected RequestParams buildQuery() {
 		RequestParams query = new RequestParams();
 
-		try {
-			if (_limit != null) {
-				query.putOpt("limit", _limit);
+		if (_limit != null) {
+			query.put("limit", _limit);
+		}
+
+		if (_offset != null) {
+			query.put("offset", _offset);
+		}
+
+		if (_wheres != null && _wheres.size() > 0) {
+			JSONArray whereArray = new JSONArray();
+			for (int i = 0; i < _wheres.size(); i++) {
+				whereArray.put(_wheres.get(i).toJSON());
+			}
+			query.put("q", whereArray);
+		}
+
+		if (_ordering != null && _ordering.size() > 0) {
+			JSONArray orderingArray = new JSONArray();
+			for (int i = 0; i < _ordering.size(); i++) {
+				orderingArray.put(_ordering.get(i).toJSON());
+			}
+			query.put("s", orderingArray);
+		}
+
+		if (_group != null && _group.size() > 0) {
+			JSONArray groupArray = new JSONArray();
+			for (int i = 0; i < _group.size(); i++) {
+				groupArray.put(_group.get(i));
+			}
+			query.put("g", groupArray);
+		}
+
+		if (_options != null) {
+			if (_options.data != null) {
+				query.put("d", _options.data);
 			}
 
-			if (_offset != null) {
-				query.putOpt("offset", _offset);
+			if (_options.first) {
+				query.put("first", 1);
 			}
 
-			if (_wheres != null && _wheres.size() > 0) {
-				JSONArray whereArray = new JSONArray();
-				for (int i = 0; i < _wheres.size(); i++) {
-					whereArray.put(_wheres.get(i).toJSON());
-				}
-				query.putOpt("q", whereArray);
+			if (_options.aggregation != null) {
+				query.put("aggr", _options.aggregation.toJSON());
 			}
 
-			if (_ordering != null && _ordering.size() > 0) {
-				JSONArray orderingArray = new JSONArray();
-				for (int i = 0; i < _ordering.size(); i++) {
-					orderingArray.put(_ordering.get(i).toJSON());
-				}
-				query.putOpt("s", orderingArray);
+			if (_options.operation != null) {
+				query.put("op", _options.operation.toJSON());
 			}
-
-			if (_group != null && _group.size() > 0) {
-				JSONArray groupArray = new JSONArray();
-				for (int i = 0; i < _group.size(); i++) {
-					groupArray.put(_group.get(i));
-				}
-				query.putOpt("g", groupArray);
-			}
-
-			if (_options != null) {
-				if (_options.data != null) {
-					query.putOpt("d", _options.data);
-				}
-
-				if (_options.first) {
-					query.putOpt("first", 1);
-				}
-
-				if (_options.aggregation != null) {
-					query.putOpt("aggr", _options.aggregation.toJSON());
-				}
-
-				if (_options.operation != null) {
-					query.putOpt("op", _options.operation.toJSON());
-				}
-			}
-
-		} catch (JSONException e) {
-			Log.d("hook", "error building query " + e.toString());
 		}
 
 		this.reset(); // clear for future calls
@@ -248,14 +246,11 @@ public class Collection {
 
 		public RequestParams toJSON() {
 			RequestParams json = new RequestParams();
-			try {
-				json.putOpt("method", method == null ? RequestParams.NULL : method);
-				json.putOpt("field", field == null ? RequestParams.NULL : field);
-				json.putOpt("value", value == null ? RequestParams.NULL : value);
 
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
+			json.put("method", method);
+			json.put("field", field);
+			json.put("value", value);
+
 			return json;
 		}
 
@@ -268,15 +263,15 @@ public class Collection {
 
 		public CollectionWhere(String field, String operation, Object value) {
 			this.field = field;
-			this.operation = operation;
+			this.operation = operation.toLowerCase();
 			this.value = value;
 		}
 
 		public Object toJSON() {
 			JSONArray json = new JSONArray();
-			json.put(field == null ? RequestParams.NULL : field);
-			json.put(operation == null ? RequestParams.NULL : operation.toLowerCase());
-			json.put(value == null ? RequestParams.NULL : value);
+			json.put(field);
+			json.put(operation);
+			json.put(value);
 			return json;
 		}
 
@@ -293,13 +288,10 @@ public class Collection {
 
 		public RequestParams toJSON() {
 			RequestParams json = new RequestParams();
-			try {
-				json.putOpt("field", field == null ? RequestParams.NULL : field);
-				json.putOpt("direction", direction == null ? RequestParams.NULL : direction);
 
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
+			json.put("field", field);
+			json.put("direction", direction);
+
 			return json;
 		}
 

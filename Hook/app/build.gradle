@@ -3,7 +3,7 @@ apply plugin: 'com.android.library'
 ext {
     PUBLISH_GROUP_ID = 'com.doubleleft.hook'
     PUBLISH_ARTIFACT_ID =  'hook-android-client'
-    PUBLISH_VERSION = '0.2.0'
+    PUBLISH_VERSION = '0.2.0.rc1'
 }
 
 android {
@@ -29,4 +29,6 @@ dependencies {
     // compile 'com.android.support:support-v4:19.1.0'
 }
 
-apply from: 'https://raw.githubusercontent.com/doubleleft/hook-android/master/gradle-scripts/android-release-aar.gradle'
+//apply from: 'https://raw.githubusercontent.com/doubleleft/hook-android/master/gradle-scripts/android-release-aar.gradle'
+
+apply from: 'https://raw.githubusercontent.com/ArthurHub/release-android-library/master/android-release-aar.gradle'

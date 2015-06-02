@@ -1,5 +1,7 @@
 package com.doubleleft.hook;
 
+import org.apache.http.Header;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -18,7 +20,7 @@ public class Auth {
 	protected static String AUTH_DATA_KEY = "hook-auth-data";
 
 	protected SharedPreferences localStorage;
-	protected RequestParams _currentUser;
+	protected JSONObject _currentUser;
 
 	protected Client client;
 
@@ -42,62 +44,43 @@ public class Auth {
 		}
 	}
 
-	public void register(RequestParams data, Responder responder) {
-		final Responder clientResponder = responder;
+	public void register(RequestParams data, final JsonHttpResponseHandler responseHandler) {
 
 		client.post("auth/email", data, new JsonHttpResponseHandler() {
 			@Override
 			public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-				// If the response is JSONObject instead of expected JSONArray
+				registerToken(response);
+				responseHandler.onSuccess(statusCode, headers, response);
 			}
 
 			@Override
-			public void onSuccess(int statusCode, Header[] headers, JSONArray timeline) {
-				// Pull out the first event on the public timeline
-				JSONObject firstEvent = timeline.get(0);
-				String tweetText = firstEvent.getString("text");
-
-				// Do something with the response
-				System.out.println(tweetText);
+			public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+				responseHandler.onFailure(statusCode, headers, throwable, errorResponse);
 			}
 		});
 
-		client.post("auth/email", data, new Responder() {
+	}
+
+	public void login(RequestParams data, final JsonHttpResponseHandler responseHandler) {
+		client.post("auth/email/login", data, new JsonHttpResponseHandler() {
 			@Override
-			public void onSuccess(Response response) {
-				registerToken(response.object);
-				clientResponder.onSuccess(response);
+			public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+				registerToken(response);
+				responseHandler.onSuccess(statusCode, headers, response);
 			}
 
 			@Override
-			public void onError(Response response) {
-				clientResponder.onError(response);
+			public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+				responseHandler.onFailure(statusCode, headers, throwable, errorResponse);
 			}
 		});
 	}
 
-	public void login(RequestParams data, Responder responder) {
-		final Responder clientResponder = responder;
-
-		client.post("auth/email/login", data, new Responder() {
-			@Override
-			public void onSuccess(Response response) {
-				registerToken(response.object);
-				clientResponder.onSuccess(response);
-			}
-
-			@Override
-			public void onError(Response response) {
-				clientResponder.onError(response);
-			}
-		});
-	}
-
-	public void forgotPassword(RequestParams data, Responder responder) {
+	public void forgotPassword(RequestParams data, AsyncHttpResponseHandler responder) {
 		client.post("auth/email/forgotPassword", data, responder);
 	}
 
-	public void resetPassword(RequestParams data, Responder responder) {
+	public void resetPassword(RequestParams data, AsyncHttpResponseHandler responder) {
 		client.post("auth/email/resetPassword", data, responder);
 	}
 
@@ -113,7 +96,7 @@ public class Auth {
 		return localStorage != null ? localStorage.getString(client.getAppId() + "-" + AUTH_TOKEN_KEY, null) : null;
 	}
 
-	protected void setCurrentUser(RequestParams data) {
+	protected void setCurrentUser(JSONObject data) {
 		_currentUser = data;
 
 		if (localStorage != null) {
@@ -128,12 +111,12 @@ public class Auth {
 		}
 	}
 
-	public RequestParams getCurrentUser() {
+	public JSONObject getCurrentUser() {
 		return _currentUser;
 	}
 
-	protected void registerToken(RequestParams data) {
-		RequestParams tokenObject = data.optJSONObject("token");
+	protected void registerToken(JSONObject data) {
+		JSONObject tokenObject = data.optJSONObject("token");
 		if (tokenObject != null) {
 			if (localStorage != null) {
 				SharedPreferences.Editor editor = localStorage.edit();

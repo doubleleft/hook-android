@@ -1,9 +1,12 @@
 package com.doubleleft.hook;
 
 import org.json.JSONException;
-import org.json.RequestParams;
+import org.json.JSONObject;
 
 import android.util.Log;
+
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 /**
  * Created by glaet on 2/28/14.
@@ -15,19 +18,13 @@ public class KeyValues {
 		this.client = client;
 	}
 
-	public void get(String key, Responder responder) {
-		this.client.get("key/" + key, null, responder);
+	public void get(String key, AsyncHttpResponseHandler responseHandler) {
+		this.client.get("key/" + key, null, responseHandler);
 	}
 
-	public void set(String key, Object value, Responder responder) {
+	public void set(String key, Object value, AsyncHttpResponseHandler responseHandler) {
 		RequestParams data = new RequestParams();
-		try {
-			data.putOpt("value", value);
-
-		} catch (JSONException e) {
-			Log.d("dl-api", "error when setting key " + e.toString());
-		}
-
-		this.client.post("key/" + key, data, responder);
+		data.put("value", value);
+		this.client.post("key/" + key, data, responseHandler);
 	}
 }
