@@ -18,50 +18,47 @@ This is a port of the [JavaScript client](http://github.com/doubleleft/hook-java
 
 ### Setup
 ```java
-String appId = "1";
-String appKey = "q1uU7tFtXnLad6FIGGn2cB+gxcx64/uPoDhqe2Zn5AE=";
-String endpointURL = "http://hook.ddll.co";
 Context context = this;
-Client client = new Client(context, endpointURL, appKey, appId);
+String appId = "1";
+String appKey = "aaf4c61ddcc5e8a2dabede0f3b482cd9aea9434d";
+String endpoint = "http://localhost:4665/";
+Client client = new Client(context, endpoint, appKey, appId);
 ```
 
 ### Create Collection Item
 ```java
-JSONObject data = new JSONObject();
+import com.loopj.android.http.*;
+
+...
+
+RequestParams data = new RequestParams();
 data.put("name", "My Book Name");
 data.put("edition", 1.0);
 
-client.collection("books").create(data, new Responder() {
+client.collection("books").create(data, new JsonHttpResponseHandler() {
 	@Override
-	public void onSuccess(Response response) {
-		Log.d("hook", response.raw);
-		/*
-			Response object:
-				public JSONObject object;
-				public JSONArray array;
-				public String raw;
-				public int code;
-		*/
+	public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+		Log.d("success: ", response.toString());
 	}
 
 	@Override
-	public void onError(Response response) {
-		Log.d("hook", "onError: "+response.raw);
+	public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+		Log.d("failure: ", errorResponse.toString());
 	}
 });
 ```
 
 ### Fetching (and filtering) items
 ```java
-client.collection("books").where("edition", 1).get(new Responder() {
+client.collection("books").where("edition", 1).get(new JsonHttpResponseHandler() {
 	@Override
-	public void onSuccess(Response response) {
-		Log.d("hook", response.object.optString("name"));
+	public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+		Log.d("success: ", response.toString());
 	}
 
 	@Override
-	public void onError(Response response) {
-		Log.d("hook", "onError: "+response.raw);
+	public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+		Log.d("failure: ", errorResponse.toString());
 	}
 });
 ```
@@ -77,16 +74,15 @@ client.collection("books").where("edition", 1).get(new Responder() {
 - `max`
 - `min`
 - `sum`
-- See [Collection.java](https://github.com/doubleleft/hook-android/blob/master/lib/dlapi/src/main/java/com/doubleleft/api/Collection.java) for better reference
 
 ### Authentication: create user
 
 ```java
-JSONObject data = new JSONObject();
+RequestParams data = new RequestParams();
 data.put("email", "gabriel@doubleleft.com");
 data.put("name", "Gabriel Laet");
 data.put("password", "123");
-client.auth.register(data, responder);
+client.auth.register(data, new JsonHttpResponseHandler() {...});
 ```
 
 Once the user is created, you don't need to verify/login again.
@@ -95,10 +91,10 @@ The library also takes care to store the current user internally.
 ### Authentication: login user
 
 ```java
-JSONObject data = new JSONObject();
+RequestParams data = new RequestParams();
 data.put("email", "gabriel@doubleleft.com");
 data.put("password", "123");
-client.auth.login(data, responder);
+client.auth.login(data, new JsonHttpResponseHandler() {...});
 ```
 
 ### Authentication: other methods
@@ -108,4 +104,7 @@ client.auth.login(data, responder);
 - `getAuthToken`
 - `hasAuthToken`
 
-- See [Auth.java](https://github.com/doubleleft/hook-android/blob/master/lib/dlapi/src/main/java/com/doubleleft/api/Auth.java) for better reference
+License
+---
+
+MIT
