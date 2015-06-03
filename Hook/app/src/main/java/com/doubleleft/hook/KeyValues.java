@@ -3,10 +3,7 @@ package com.doubleleft.hook;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Log;
-
 import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 
 /**
  * Created by glaet on 2/28/14.
@@ -23,8 +20,12 @@ public class KeyValues {
 	}
 
 	public void set(String key, Object value, AsyncHttpResponseHandler responseHandler) {
-		RequestParams data = new RequestParams();
-		data.put("value", value);
+		JSONObject data = new JSONObject();
+		try {
+			data.put("value", value);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 		this.client.post("key/" + key, data, responseHandler);
 	}
 }

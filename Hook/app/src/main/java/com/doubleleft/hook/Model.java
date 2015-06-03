@@ -8,7 +8,8 @@ import java.util.Locale;
 import android.util.Log;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
+
+import org.json.JSONObject;
 
 /**
  * Base Model Class. Your model Classes should extend this Class.
@@ -32,8 +33,8 @@ public abstract class Model {
 
 		// D-D-D-D-DROP THE BASS
 		String collectionName = this.getModelName();
-		RequestParams RequestParams = new RequestParams(hashMap);
-		Client.getInstance().collection(collectionName).create(RequestParams, responseHandler);
+		JSONObject jsonObject = new JSONObject(hashMap);
+		Client.getInstance().collection(collectionName).create(jsonObject, responseHandler);
 	}
 
 	/**

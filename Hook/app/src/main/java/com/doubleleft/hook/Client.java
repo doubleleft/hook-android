@@ -5,6 +5,15 @@ import com.loopj.android.http.*;
 import android.content.Context;
 import android.util.Log;
 
+import org.apache.http.HttpEntity;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URLEncoder;
+
 /**
  * Created by glaet on 2/28/14.
  */
@@ -43,10 +52,6 @@ public class Client {
 		this.appKey = appKey;
 		this.endpoint= endpoint;
 
-		Log.d("hook", "appId = " + this.appId);
-		Log.d("hook", "key = " + this.appKey);
-		Log.d("hook", "url = " + this.endpoint);
-
 		auth = new Auth(this);
 		keys = new KeyValues(this);
 		system = new System(this);
@@ -54,61 +59,79 @@ public class Client {
 		// Singleton
 		instance = this;
 		instance.context = context;
+
+		// Request headers
+		httpClient.addHeader("Content-Type", "application/json");
+		httpClient.addHeader("X-App-Id", appId);
+		httpClient.addHeader("X-App-Key", appKey);
 	}
 
 	public Collection collection(String collectionName) {
 		return new Collection(this, collectionName);
 	}
 
-	public Channel channel(String name, RequestParams options) {
+	public Channel channel(String name, JSONObject options) {
 		// TODO: implement client Channel API
 		throw new Error("Channel API not implemented");
 	}
 
-	public RequestHandle get(String segments, RequestParams data, AsyncHttpResponseHandler responseHandler) {
+	public RequestHandle get(String segments, JSONObject data, AsyncHttpResponseHandler responseHandler) {
 		return this.request(segments, "GET", data, responseHandler);
 	}
 
-	public RequestHandle post(String segments, RequestParams data, AsyncHttpResponseHandler responseHandler) {
+	public RequestHandle post(String segments, JSONObject data, AsyncHttpResponseHandler responseHandler) {
 		return this.request(segments, "POST", data, responseHandler);
 	}
 
-	public RequestHandle put(String segments, RequestParams data, AsyncHttpResponseHandler responseHandler) {
+	public RequestHandle put(String segments, JSONObject data, AsyncHttpResponseHandler responseHandler) {
 		return this.request(segments, "PUT", data, responseHandler);
 	}
 
 	public RequestHandle remove(String segments, AsyncHttpResponseHandler responseHandler) {
         // Send empty request params
-        RequestParams params = new RequestParams();
+        JSONObject params = new JSONObject();
 		return this.request(segments, "DELETE", params, responseHandler);
 	}
 
-	public RequestHandle request(String segments, String method, RequestParams data, AsyncHttpResponseHandler responseHandler) {
-
-        // Request headers
-        httpClient.addHeader("Content-Type", "application/json");
-        httpClient.addHeader("X-App-Id", appId);
-        httpClient.addHeader("X-App-Key", appKey);
-
+	public RequestHandle request(String segments, String method, JSONObject data, AsyncHttpResponseHandler responseHandler) {
         if (auth.hasAuthToken()) {
             httpClient.addHeader("X-Auth-Token", auth.getAuthToken());
-        }
+        } else {
+			httpClient.removeHeader("X-Auth-Token");
+		}
 
-        data.setUseJsonStreamer(true);
+		RequestParams params = new RequestParams();
+
+		for(int i = 0; i<data.names().length(); i++) {
+			try {
+				params.put(data.names().getString(i), data.get(data.names().getString(i)));
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+		params.setUseJsonStreamer(true);
 
         RequestHandle handle;
 
         if (method == "POST") {
-            handle = httpClient.get(endpoint + "/" + segments, data, responseHandler);
+			handle = httpClient.post(endpoint + "/" + segments, params, responseHandler);
 
         } else if (method == "PUT") {
-            handle = httpClient.put(endpoint + "/" + segments, data, responseHandler);
+			handle = httpClient.put(endpoint + "/" + segments, params, responseHandler);
 
         } else if (method == "DELETE") {
             handle = httpClient.delete(endpoint + "/" + segments, responseHandler);
 
         } else {
-            handle = httpClient.get(endpoint + "/" + segments, data, responseHandler);
+			String queryString = "";
+			try {
+				queryString = URLEncoder.encode(data.toString(), "utf-8");
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+            handle = httpClient.get(endpoint + "/" + segments + "?" + queryString, responseHandler);
         }
 
 		Log.d("hook", "request " + data.toString());

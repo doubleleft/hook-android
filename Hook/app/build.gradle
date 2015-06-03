@@ -3,16 +3,16 @@ apply plugin: 'com.android.library'
 ext {
     PUBLISH_GROUP_ID = 'com.doubleleft.hook'
     PUBLISH_ARTIFACT_ID =  'hook-android-client'
-    PUBLISH_VERSION = '0.2.0.rc1'
+    PUBLISH_VERSION = '0.2.0'
 }
 
 android {
-    compileSdkVersion 19
+    compileSdkVersion 21
     buildToolsVersion "22.0.0"
 
     defaultConfig {
         minSdkVersion 10
-        targetSdkVersion 19
+        targetSdkVersion 21
     }
 
     buildTypes {
@@ -22,11 +22,10 @@ android {
         }
     }
 }
+
 dependencies {
     // https://github.com/loopj/android-async-http/
     compile 'com.loopj.android:android-async-http:1.4.5'
-
-    // compile 'com.android.support:support-v4:19.1.0'
 }
 
 //apply from: 'https://raw.githubusercontent.com/doubleleft/hook-android/master/gradle-scripts/android-release-aar.gradle'

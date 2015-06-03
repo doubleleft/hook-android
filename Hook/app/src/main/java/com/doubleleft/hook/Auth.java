@@ -1,7 +1,6 @@
 package com.doubleleft.hook;
 
 import org.apache.http.Header;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -28,23 +27,25 @@ public class Auth {
 
 		this.client = client;
 
-		localStorage = Client.context.getSharedPreferences("hook-localStorage-" + client.getAppId(), Context.MODE_PRIVATE);
+		if (Client.context != null) {
+			localStorage = Client.context.getSharedPreferences("hook-localStorage-" + client.getAppId(), Context.MODE_PRIVATE);
 
-		if (localStorage != null) {
-			String currentUser = localStorage.getString(client.getAppId() + "-" + AUTH_DATA_KEY, null);
-			if (currentUser != null) {
-				try {
-					JSONObject user = (JSONObject) new JSONTokener(currentUser).nextValue();
-					setCurrentUser(user);
+			if (localStorage != null) {
+				String currentUser = localStorage.getString(client.getAppId() + "-" + AUTH_DATA_KEY, null);
+				if (currentUser != null) {
+					try {
+						JSONObject user = (JSONObject) new JSONTokener(currentUser).nextValue();
+						setCurrentUser(user);
 
-				} catch (JSONException e) {
-					Log.d("hook", "error on Auth module " + e.toString());
+					} catch (JSONException e) {
+						Log.d("hook", "error on Auth module " + e.toString());
+					}
 				}
 			}
 		}
 	}
 
-	public void register(RequestParams data, final JsonHttpResponseHandler responseHandler) {
+	public void register(JSONObject data, final JsonHttpResponseHandler responseHandler) {
 
 		client.post("auth/email", data, new JsonHttpResponseHandler() {
 			@Override
@@ -61,7 +62,7 @@ public class Auth {
 
 	}
 
-	public void login(RequestParams data, final JsonHttpResponseHandler responseHandler) {
+	public void login(JSONObject data, final JsonHttpResponseHandler responseHandler) {
 		client.post("auth/email/login", data, new JsonHttpResponseHandler() {
 			@Override
 			public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -76,11 +77,11 @@ public class Auth {
 		});
 	}
 
-	public void forgotPassword(RequestParams data, AsyncHttpResponseHandler responder) {
+	public void forgotPassword(JSONObject data, AsyncHttpResponseHandler responder) {
 		client.post("auth/email/forgotPassword", data, responder);
 	}
 
-	public void resetPassword(RequestParams data, AsyncHttpResponseHandler responder) {
+	public void resetPassword(JSONObject data, AsyncHttpResponseHandler responder) {
 		client.post("auth/email/resetPassword", data, responder);
 	}
 

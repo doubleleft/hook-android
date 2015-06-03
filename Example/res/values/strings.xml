@@ -1,9 +1,0 @@
-<resources>
-
-    <string name="app_name">Hook Samples</string>
-	
-	<string name="hook_appId">12</string>
-	<string name="hook_appKey">9cf847b54b14f4b4e2a53f65ffef4071</string>
-    <string name="hook_endpointUrl">http://hook.ddll.co</string>
-    
-</resources>

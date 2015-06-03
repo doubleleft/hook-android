@@ -1,20 +1,26 @@
-hook-android [![Download](https://api.bintray.com/packages/endel/maven/hook-android/images/download.svg)  ](https://bintray.com/endel/maven/hook-android/_latestVersion)
+hook-android [![Download](https://api.bintray.com/packages/doubleleft/hook-android/hook-android/images/download.svg)  ](https://bintray.com/doubleleft/hook-android/hook-android/_latestVersion)
 ===
 
 Android client for [hook](https://github.com/doubleleft/hook).
 
-TODO
----
-
-- Use [android-async-http](https://github.com/loopj/android-async-http/) on
-  Request class.
-- Use SQLite to store Auth data.
-
-#About
-
-This is a port of the [JavaScript client](http://github.com/doubleleft/hook-javascript). The library is a native Android Library, with no external dependencies, targetting Android API Level 10. It doesn't require the JavaScript client either, the library communicates with hook's REST interface.
-
 #How to Use
+
+## Configure as a depedency
+
+In your application `build.gradle` file, add the following lines:
+
+```gradle
+repositories {
+    maven {
+        url  "http://dl.bintray.com/doubleleft/hook-android"
+    }
+}
+
+dependencies {
+    // ...
+    compile 'com.doubleleft.hook:hook-android-client:0.2.0'
+}
+```
 
 ### Setup
 ```java
@@ -27,11 +33,7 @@ Client client = new Client(context, endpoint, appKey, appId);
 
 ### Create Collection Item
 ```java
-import com.loopj.android.http.*;
-
-...
-
-RequestParams data = new RequestParams();
+JSONObject data = new JSONObject();
 data.put("name", "My Book Name");
 data.put("edition", 1.0);
 
@@ -78,7 +80,7 @@ client.collection("books").where("edition", 1).get(new JsonHttpResponseHandler()
 ### Authentication: create user
 
 ```java
-RequestParams data = new RequestParams();
+JSONObject data = new JSONObject();
 data.put("email", "gabriel@doubleleft.com");
 data.put("name", "Gabriel Laet");
 data.put("password", "123");
@@ -91,7 +93,7 @@ The library also takes care to store the current user internally.
 ### Authentication: login user
 
 ```java
-RequestParams data = new RequestParams();
+JSONObject data = new JSONObject();
 data.put("email", "gabriel@doubleleft.com");
 data.put("password", "123");
 client.auth.login(data, new JsonHttpResponseHandler() {...});
@@ -103,6 +105,22 @@ client.auth.login(data, new JsonHttpResponseHandler() {...});
 - `logout`
 - `getAuthToken`
 - `hasAuthToken`
+
+Contributing
+---
+
+**Creating a new release version**
+
+```
+cd Hook
+gradle generateRelease
+```
+
+Log-in on
+[bintray](https://bintray.com/doubleleft/hook-android/hook-android/new/version),
+create a new version.  Click on "Upload Files", from the recently version
+created, and attach the `.zip` file genereated via `gradle generateRelease`
+task. Make sure to select "Explode this archive" from the "Attached Files" list.
 
 License
 ---

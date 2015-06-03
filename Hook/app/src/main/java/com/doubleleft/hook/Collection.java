@@ -7,10 +7,10 @@ import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import android.annotation.SuppressLint;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by glaet on 2/28/14.
@@ -40,7 +40,7 @@ public class Collection {
 		this.reset();
 	}
 
-	public RequestHandle create(RequestParams data, AsyncHttpResponseHandler responseHandler) {
+	public RequestHandle create(JSONObject data, AsyncHttpResponseHandler responseHandler) {
 		return client.post(this.segments, data, responseHandler);
 	}
 
@@ -53,10 +53,10 @@ public class Collection {
 		return this.get(responseHandler);
 	}
 
-	public RequestHandle firstOrCreate(RequestParams data, AsyncHttpResponseHandler responseHandler) {
+	public RequestHandle firstOrCreate(JSONObject data, AsyncHttpResponseHandler responseHandler) {
 		_options.first = true;
-		// TODO: implement firstOrCreate method
-		throw new Error("Not implemented");
+        _options.data = data;
+        return this.client.post(this.segments, this.buildQuery(), responseHandler);
 	}
 
 	public RequestHandle count(AsyncHttpResponseHandler responseHandler) {
@@ -84,11 +84,11 @@ public class Collection {
 		return this.get(responseHandler);
 	}
 
-	public RequestHandle update(int id, RequestParams data, AsyncHttpResponseHandler responseHandler) {
+	public RequestHandle update(int id, JSONObject data, AsyncHttpResponseHandler responseHandler) {
 		return client.post(this.segments + "/" + id, data, responseHandler);
 	}
 
-	public RequestHandle updateAll(RequestParams data, AsyncHttpResponseHandler responseHandler) {
+	public RequestHandle updateAll(JSONObject data, AsyncHttpResponseHandler responseHandler) {
 		_options.data = data;
 		return client.put(this.segments, this.buildQuery(), responseHandler);
 	}
@@ -116,10 +116,14 @@ public class Collection {
 	}
 
 	public Collection where(String field, String operation, Object value) {
-		CollectionWhere obj = new CollectionWhere(field, operation, value);
-		_wheres.add(obj);
+		_wheres.add(new CollectionWhere(field, operation, value, "and"));
 		return this;
 	}
+
+    public Collection orWhere(String field, String operation, Object value) {
+        _wheres.add(new CollectionWhere(field, operation, value, "or"));
+        return this;
+    }
 
 	public Collection group(String field) {
 		_group.add(field);
@@ -138,8 +142,7 @@ public class Collection {
 	}
 
 	public Collection sort(String field, String direction) {
-		CollectionOrdering obj = new CollectionOrdering(field, direction);
-		_ordering.add(obj);
+		_ordering.add(new CollectionOrdering(field, direction));
 		return this;
 	}
 
@@ -153,58 +156,63 @@ public class Collection {
 		return this;
 	}
 
-	protected RequestParams buildQuery() {
-		RequestParams query = new RequestParams();
+	protected JSONObject buildQuery() {
+        JSONObject query = new JSONObject();
 
-		if (_limit != null) {
-			query.put("limit", _limit);
-		}
+        try {
+            if (_limit != null) {
+                query.put("limit", _limit);
+            }
 
-		if (_offset != null) {
-			query.put("offset", _offset);
-		}
+            if (_offset != null) {
+                query.put("offset", _offset);
+            }
 
-		if (_wheres != null && _wheres.size() > 0) {
-			JSONArray whereArray = new JSONArray();
-			for (int i = 0; i < _wheres.size(); i++) {
-				whereArray.put(_wheres.get(i).toJSON());
-			}
-			query.put("q", whereArray);
-		}
+            if (_wheres != null && _wheres.size() > 0) {
+                JSONArray whereArray = new JSONArray();
+                for (int i = 0; i < _wheres.size(); i++) {
+                    whereArray.put(_wheres.get(i).toJSON());
+                }
+                query.put("q", whereArray);
+            }
 
-		if (_ordering != null && _ordering.size() > 0) {
-			JSONArray orderingArray = new JSONArray();
-			for (int i = 0; i < _ordering.size(); i++) {
-				orderingArray.put(_ordering.get(i).toJSON());
-			}
-			query.put("s", orderingArray);
-		}
+            if (_ordering != null && _ordering.size() > 0) {
+                JSONArray orderingArray = new JSONArray();
+                for (int i = 0; i < _ordering.size(); i++) {
+                    orderingArray.put(_ordering.get(i).toJSON());
+                }
+                query.put("s", orderingArray);
+            }
 
-		if (_group != null && _group.size() > 0) {
-			JSONArray groupArray = new JSONArray();
-			for (int i = 0; i < _group.size(); i++) {
-				groupArray.put(_group.get(i));
-			}
-			query.put("g", groupArray);
-		}
+            if (_group != null && _group.size() > 0) {
+                JSONArray groupArray = new JSONArray();
+                for (int i = 0; i < _group.size(); i++) {
+                    groupArray.put(_group.get(i));
+                }
+                query.put("g", groupArray);
+            }
 
-		if (_options != null) {
-			if (_options.data != null) {
-				query.put("d", _options.data);
-			}
+            if (_options != null) {
+                if (_options.data != null) {
+                    query.put("data", _options.data);
+                }
 
-			if (_options.first) {
-				query.put("first", 1);
-			}
+                if (_options.first) {
+                    query.put("first", 1);
+                }
 
-			if (_options.aggregation != null) {
-				query.put("aggr", _options.aggregation.toJSON());
-			}
+                if (_options.aggregation != null) {
+                    query.put("aggr", _options.aggregation.toJSON());
+                }
 
-			if (_options.operation != null) {
-				query.put("op", _options.operation.toJSON());
-			}
-		}
+                if (_options.operation != null) {
+                    query.put("op", _options.operation.toJSON());
+                }
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
 		this.reset(); // clear for future calls
 		return query;
@@ -221,7 +229,7 @@ public class Collection {
 
 	class CollectionOptions {
 		public boolean first;
-		public RequestParams data;
+		public JSONObject data;
 		public CollectionOptionItem aggregation;
 		public CollectionOptionItem operation;
 
@@ -244,12 +252,16 @@ public class Collection {
 			this.value = value;
 		}
 
-		public RequestParams toJSON() {
-			RequestParams json = new RequestParams();
+		public JSONObject toJSON() {
+            JSONObject json = new JSONObject();
 
-			json.put("method", method);
-			json.put("field", field);
-			json.put("value", value);
+            try {
+                json.put("method", method);
+                json.put("field", field);
+                json.put("value", value);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
 			return json;
 		}
@@ -260,18 +272,21 @@ public class Collection {
 		public String field;
 		public String operation;
 		public Object value;
+        public String bool;
 
-		public CollectionWhere(String field, String operation, Object value) {
-			this.field = field;
-			this.operation = operation.toLowerCase();
-			this.value = value;
-		}
+        public CollectionWhere(String field, String operation, Object value, String bool) {
+            this.field = field;
+            this.operation = operation.toLowerCase();
+            this.value = value;
+            this.bool = bool;
+        }
 
-		public Object toJSON() {
+		public JSONArray toJSON() {
 			JSONArray json = new JSONArray();
 			json.put(field);
 			json.put(operation);
 			json.put(value);
+            json.put(bool);
 			return json;
 		}
 
@@ -286,12 +301,10 @@ public class Collection {
 			this.direction = direction;
 		}
 
-		public RequestParams toJSON() {
-			RequestParams json = new RequestParams();
-
-			json.put("field", field);
-			json.put("direction", direction);
-
+		public JSONArray toJSON() {
+            JSONArray json = new JSONArray();
+            json.put(field);
+            json.put(direction);
 			return json;
 		}
 

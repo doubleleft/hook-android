@@ -5,9 +5,8 @@ import java.util.concurrent.CountDownLatch;
 import android.test.InstrumentationTestCase;
 import android.util.Log;
 
-import com.doubleleft.hook.Client;
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
+import com.doubleleft.hook.*;
+import com.loopj.android.http.*;
 
 import org.apache.http.Header;
 import org.json.JSONObject;
@@ -17,20 +16,21 @@ import org.json.JSONObject;
  */
 public class CollectionTest extends InstrumentationTestCase {
 
-	public String appId = "1";
-	public String appKey = "q1uU7tFtXnLad6FIGGn2cB+gxcx64/uPoDhqe2Zn5AE=";
-	public String endpointURL = "http://dl-api.ddll.co";
+	public String appId = "2";
+	public String appKey = "89b05c703fc10ad619a8a3dde3603c4e";
+	public String endpointURL = "http://localhost:4665/";
 
 	public void testCreateAndFetch() throws Exception {
+		Client client = new Client(null, appId, appKey, endpointURL);
 
 		final CountDownLatch signal = new CountDownLatch(1);
 
-		RequestParams data = new RequestParams();
+		JSONObject data = new JSONObject();
 		data.put("device", "Samsung Galaxy");
 		data.put("version", 10.0);
 		data.put("hasCameraSupport", true);
 
-		Client.getInstance().collection("android").create(data, new JsonHttpResponseHandler() {
+		client.collection("android").create(data, new JsonHttpResponseHandler() {
 			@Override
 			public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 				Log.d("dl-api", response.toString());
@@ -51,9 +51,10 @@ public class CollectionTest extends InstrumentationTestCase {
 	}
 
 	public void testWhere() throws Exception {
+		Client client = new Client(null, appId, appKey, endpointURL);
 
 		final CountDownLatch signal = new CountDownLatch(1);
-		Client.getInstance().collection("android").where("version", 10).get(new JsonHttpResponseHandler() {
+		client.collection("android").where("version", 10).get(new JsonHttpResponseHandler() {
 			@Override
 			public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 				assertEquals("10", response.optString("version"));
@@ -71,14 +72,15 @@ public class CollectionTest extends InstrumentationTestCase {
 	}
 
 	public void testSort() throws Exception {
+		Client client = new Client(null, appId, appKey, endpointURL);
 
 		final CountDownLatch signal = new CountDownLatch(2);
 
-		RequestParams data = new RequestParams();
+		JSONObject data = new JSONObject();
 		data.put("device", "Samsung Galaxy");
 		data.put("version", 5.0);
 
-		Client.getInstance().collection("android").create(data, new JsonHttpResponseHandler() {
+		client.collection("android").create(data, new JsonHttpResponseHandler() {
 			@Override
 			public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 				Client.getInstance().collection("android").sort("version", "desc").get(new JsonHttpResponseHandler() {
