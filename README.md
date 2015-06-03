@@ -10,12 +10,6 @@ Android client for [hook](https://github.com/doubleleft/hook).
 In your application `build.gradle` file, add the following lines:
 
 ```gradle
-repositories {
-    maven {
-        url  "http://dl.bintray.com/doubleleft/hook-android"
-    }
-}
-
 dependencies {
     // ...
     compile 'com.doubleleft.hook:hook-android-client:0.2.0'
