@@ -198,7 +198,7 @@ public class Collection {
                 }
 
                 if (_options.first) {
-                    query.put("first", 1);
+                    query.put("f", 1);
                 }
 
                 if (_options.aggregation != null) {
