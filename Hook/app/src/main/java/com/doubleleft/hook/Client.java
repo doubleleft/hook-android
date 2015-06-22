@@ -110,7 +110,7 @@ public class Client {
 			}
 		}
 
-        RequestHandle handle;
+        RequestHandle handle = null;
 
         if (method == "POST") {
 			handle = httpClient.post(endpoint + "/" + segments, params, responseHandler);
