@@ -109,7 +109,6 @@ public class Client {
 				e.printStackTrace();
 			}
 		}
-		params.setUseJsonStreamer(true);
 
         RequestHandle handle;
 
@@ -119,10 +118,7 @@ public class Client {
         } else if (method == "PUT") {
 			handle = httpClient.put(endpoint + "/" + segments, params, responseHandler);
 
-        } else if (method == "DELETE") {
-            handle = httpClient.delete(endpoint + "/" + segments, responseHandler);
-
-        } else {
+        } else if (method == "DELETE" || method == "GET") {
 			String queryString = "";
 			try {
 				queryString = URLEncoder.encode(data.toString(), "utf-8");
