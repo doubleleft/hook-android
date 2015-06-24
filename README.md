@@ -12,7 +12,7 @@ In your application `build.gradle` file, add the following lines:
 ```gradle
 dependencies {
     // ...
-    compile 'com.doubleleft.hook:hook-android-client:0.2.0'
+    compile 'com.doubleleft.hook:hook-android-client:0.2.3'
 }
 ```
 
