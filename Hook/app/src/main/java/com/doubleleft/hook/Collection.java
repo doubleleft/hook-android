@@ -3,7 +3,6 @@ package com.doubleleft.hook;
 import java.util.Vector;
 
 import com.loopj.android.http.RequestHandle;
-import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import android.annotation.SuppressLint;
